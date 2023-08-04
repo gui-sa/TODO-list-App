@@ -17,6 +17,7 @@ datasource db {
 // npx prisma db push
 // npx prisma migrate dev
   // This command MIGHT reset your database... be cautious.
+    // For some unknown reasons, if you use the flag --name <name> it forces you to reset it!
   // npx prisma migrate reset
     // Regenerate your database schema (data is not included, tho)
 
