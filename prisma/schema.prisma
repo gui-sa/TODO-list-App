@@ -15,17 +15,19 @@ datasource db {
 // Many todos might be sub-task from one todo
 // npx prisma generate
 // npx prisma db push
-// npx prisma migrate dev --name nomeDoCommit
-  // This command will reset your database... be cautious.
+// npx prisma migrate dev
+  // This command MIGHT reset your database... be cautious.
   // npx prisma migrate reset
-    // Regenerate your database schema (data is not included)S
+    // Regenerate your database schema (data is not included, tho)
+
 
 // Nao usar maiusculas... o database nao curte.
 
 model users {
-  id    Int     @id @default(autoincrement())
-  name  String  @db.VarChar(150)
-  email String? @db.VarChar(100) @unique
+  id    Int       @id @default(autoincrement())
+  name  String    @db.VarChar(150)
+  email String?   @db.VarChar(100) @unique
+  birth DateTime?     
   todos todos[]
 }
 
