@@ -1,0 +1,33 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/test_app?schema=public"
+}
+
+// Modelling! =========================================>
+// One User might have Many Todos
+// Many todos might be sub-task from one todo
+
+model User {
+  id    Int     @id @default(autoincrement())
+  name  String  @db.VarChar(150)
+  todos Todo[]
+}
+
+model Todo {
+  id              Int     @id   @default(autoincrement())
+  user            User    @relation(fields: [userId], references: [id])
+  userId          Int
+  todo            Todo?   @relation("TodoInterdependentTree",fields: [todo_parent_id], references: [id])
+  todo_parent_id  Int?
+  todos           Todo[]  @relation("TodoInterdependentTree")
+  name            String  @db.VarChar(50)
+  description     String  @db.VarChar(255)  
+  completed       Boolean @default(false)
+}
