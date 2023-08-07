@@ -1,5 +1,5 @@
 # TODO-list-App
-API - Requirement - Node - PostgreSQL - Express - Prisma
+API - Requirement - Node - PostgreSQL - Express - Prisma - jest - supertest
 
 ## User Requirements:
 - You can have multiple TODO lists

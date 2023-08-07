@@ -9,7 +9,7 @@ User Requirements:
 
 
 
-System Requirements:
+System Requirements:.;.
 [-] 1 route for creating an empty TODO list (POST)
 [] 1 route for returning all TODO lists that exists, and their sizes
 [] 1 route for returning all TODO items on a TODO list (GET + pagination)
