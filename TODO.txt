@@ -10,8 +10,10 @@ User Requirements:
 
 
 System Requirements:.;.
-[-] 1 route for creating an empty TODO list (POST)
-[] 1 route for returning all TODO lists that exists, and their sizes
+[x] 1 route for creating an empty TODO list (POST)
+    [x] 1 route for creating an empty user (POST)
+[-] 1 route for returning all TODO lists that exists, and their sizes
+    [] service that creates todo list must check user name
 [] 1 route for returning all TODO items on a TODO list (GET + pagination)
 [] 1 route for editing an existing TODO list
 [] 1 route for deleting an existing TODO list

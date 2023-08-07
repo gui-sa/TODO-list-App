@@ -4,7 +4,6 @@ const app = require('./../index')
 const request = require('supertest')
 
 
-
 describe("GET /teste", () => {
     it("Should respond with a HTML 'Teste' in h1", async () => {
       const response = await request(app).get('/teste');
@@ -20,6 +19,14 @@ describe("GET /asdsa", () => {
     expect(response.text).toBe("<html><head></head><body><h1>Page Not Found</h1></body></html>");
   });
 });
+
+describe("POST /users/newuser", () => {
+  it("Create empty user", async () => {
+    const response = await request(app).post('/users/newuser');
+    expect(response.statusCode).toBe(201);      
+  });
+});
+
 
 
 afterAll(async () => {

@@ -2,10 +2,12 @@
 
 const express = require('express');
 const router =  require('./routes/main');
+const bodyParser = require('body-parser');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(bodyParser.json());
 app.use('/',router);
 
 app.listen(port).on('listening',()=>{

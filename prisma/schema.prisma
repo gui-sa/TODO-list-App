@@ -34,9 +34,9 @@ model users {
 
 model todos {
   id              Int       @id   @default(autoincrement())
-  user            users     @relation(fields: [user_id], references: [id])
+  user            users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user_id         Int
-  todo            todos?    @relation("todo_inter_dependent_tree",fields: [todo_parent_id], references: [id])
+  todo            todos?    @relation("todo_inter_dependent_tree",fields: [todo_parent_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   todo_parent_id  Int?
   todos           todos[]   @relation("todo_inter_dependent_tree")
   name            String    @db.VarChar(50)
