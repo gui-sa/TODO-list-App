@@ -3,6 +3,8 @@
 const { Prisma } = require('@prisma/client');
 const {BadRequestError} = require('./../services/errors');
 const users_services = require('./../services/users');
+const prismaSingleton = require('./../services/prisma');
+const prisma = prismaSingleton();
 
 afterEach(()=>{
     jest.restoreAllMocks();
@@ -19,7 +21,7 @@ describe("Service users - createEmptyUser",()=>{
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const req = {body:{...newUser}};
-        jest.spyOn(users_services.prisma.users,"create").mockImplementation(obj=>obj.data)
+        jest.spyOn(prisma.users,"create").mockImplementation(obj=>obj.data)
         await users_services.createEmptyUser(req,res);
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
@@ -32,7 +34,7 @@ describe("Service users - createEmptyUser",()=>{
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const req = {body:{...newUser}};
-        jest.spyOn(users_services.prisma.users,"create").mockImplementation(obj=>obj.data)
+        jest.spyOn(prisma.users,"create").mockImplementation(obj=>obj.data)
         await users_services.createEmptyUser(req,res);
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
@@ -45,7 +47,7 @@ describe("Service users - createEmptyUser",()=>{
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const req = {body:{...newUser}};
-        jest.spyOn(users_services.prisma.users,"create").mockImplementation(obj=>obj.data);
+        jest.spyOn(prisma.users,"create").mockImplementation(obj=>obj.data);
         await users_services.createEmptyUser(req,res);
         expect(res.status).toHaveBeenCalledWith(424); 
         expect(res.send).toHaveBeenCalled();
@@ -61,7 +63,7 @@ describe("Service users - createEmptyUser",()=>{
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const req = {body:{...newUser}};
-        jest.spyOn(users_services.prisma.users,"create").mockImplementation((obj)=>{
+        jest.spyOn(prisma.users,"create").mockImplementation((obj)=>{
             throw new Prisma.PrismaClientKnownRequestError("Same existing client",{code:'KnowRequest'});
         });
         await users_services.createEmptyUser(req,res);
@@ -79,7 +81,7 @@ describe("Service users - createEmptyUser",()=>{
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const req = {body:{...newUser}};
-        jest.spyOn(users_services.prisma.users,"create").mockImplementation((obj)=>{
+        jest.spyOn(prisma.users,"create").mockImplementation((obj)=>{
             throw new Prisma.PrismaClientInitializationError("Database Server is down");
         });
         await users_services.createEmptyUser(req,res);

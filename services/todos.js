@@ -1,11 +1,12 @@
 'use strict'
 
 const {BadRequestError} = require('./errors');
-const {PrismaClient, Prisma} = require('@prisma/client');
-const prisma = new PrismaClient();
+const {Prisma} = require('@prisma/client');
+const prismaSingleton = require('./prisma');
+const prisma = prismaSingleton();
 
 
-const validadeTodo = function(todo){
+const validateTodo = function(todo){
     if ((todo.user_id)&&(todo.name)){
         return todo
     }else{
@@ -15,7 +16,7 @@ const validadeTodo = function(todo){
 
 const createEmptyTodo = async function(req,res){
     try{
-        const todo = validadeTodo(req.body);
+        const todo = validateTodo(req.body);
         await prisma.todos.create({data:{
             user_id: todo.user_id,
             todo_parent_id : todo.todo_parent_id || null,

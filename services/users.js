@@ -2,9 +2,9 @@
 
 
 const {BadRequestError} = require('./errors');
-const {PrismaClient, Prisma} = require('@prisma/client');
-const prisma = new PrismaClient();
-
+const {Prisma} = require('@prisma/client');
+const prismaSingleton = require('./prisma');
+const prisma = prismaSingleton();
 
 
 const validateUser = function(user){
@@ -32,7 +32,7 @@ const createEmptyUser = async function(req,res){
             }else if(e instanceof Prisma.PrismaClientKnownRequestError){
                 return res.status(409).send(e);
             }
-            return res.status(500).send(e.message);
+            return res.status(500).send(e);
         
         };
 }
@@ -40,6 +40,5 @@ const createEmptyUser = async function(req,res){
 
 
 module.exports = {
-    prisma,
     createEmptyUser
 }

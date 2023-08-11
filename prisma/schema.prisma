@@ -7,7 +7,12 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:postgres@localhost:5432/test_app?schema=public"
+        //url production:
+  //url = "postgresql://postgres:postgres@localhost:5432/test_app?schema=public"
+        //url teste:
+  //url = "postgresql://postgres:postgres@localhost:5432/test_test_app?schema=public"
+      // from .env
+  url = env("DATABASE_URL")
 }
 
 // Modelling! =========================================>
