@@ -16,7 +16,7 @@ const validateUser = function(user){
 }
 
 const createEmptyUser = async function(req,res){
-    try{
+        try{
         const user = validateUser(req.body);
         await prisma.users.create({data:{
             name: user.name,
@@ -24,19 +24,22 @@ const createEmptyUser = async function(req,res){
             birth : user.birth ? new Date(user.birth) : null 
             }});
         return res.status(201).send();
-    }catch(e){
-        if(e instanceof BadRequestError){
-            return res.status(424).send(e);
-        }else if(e instanceof Prisma.PrismaClientKnownRequestError){
-            return res.status(409).send(e);
-        }
-        return res.status(500).send(e.message());
-    }
+        }catch(e){
+            console.log(e.message);
 
+            if(e instanceof BadRequestError){
+                return res.status(424).send(e);
+            }else if(e instanceof Prisma.PrismaClientKnownRequestError){
+                return res.status(409).send(e);
+            }
+            return res.status(500).send(e.message);
+        
+        };
 }
 
 
 
 module.exports = {
+    prisma,
     createEmptyUser
 }

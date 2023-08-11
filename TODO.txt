@@ -35,20 +35,20 @@ Testes:
     [] Rota /newtodo
         [] Função createEmptyTodo
             [] Unitario
-                [] Todos os objetos preenchidos
-                    [] Retorna 201
-                    [] Retorna objeto identico enviado
-                [] Somente objetos necessarios
-                    [] Retorna 201
-                    [] Retorna objeto identico enviado as demais propriedades estarao nulas ou default
-                [] Objeto faltante
-                    [] Deve retornar Erro `Propriedades Minimas Incompletas`
-                [] Objeto vazio
-                    [] Deve retornar Erro `Propriedades Minimas Incompletas`
+                [x] Todos os objetos preenchidos
+                    [x] Retorna 201
+                    [x] Retorna objeto identico enviado
+                [x] Somente objetos necessarios
+                    [x] Retorna 201
+                    [x] Retorna objeto identico enviado as demais propriedades estarao nulas ou default
+                [x] Objeto faltante
+                    [x] Deve retornar Erro `Propriedades Minimas Incompletas`
+                [x] Objeto vazio
+                    [x] Deve retornar Erro `Propriedades Minimas Incompletas`
                 [] Validação de propriedades
                     [] id - nunca é enviado
-                        [] Ignorado
-                        ?Ele é recebido?
+                        [x] Ignorado
+                        ?Ele é recebido?SIM
                     [] user_id
                         [] Deve apontar para ID existente
                         [] Deve apontar para o ID do usuario logado
@@ -86,7 +86,7 @@ Testes:
                 [x] Deve retornar Erro `Propriedades Minimas Incompletas`
             [] Unitario
                 [] id
-                    ?Recebo ele de volta?
+                    ?Recebo ele de volta? SIM
                 [] name
                     [] String
                     [] Obrigatorio
