@@ -18,7 +18,6 @@ const clearAllTestDatabase = async function(){
   }else{
     throw new Error("Strange database URL injected for clear action");
   }
-
 };
 
 beforeAll( async ()=>{

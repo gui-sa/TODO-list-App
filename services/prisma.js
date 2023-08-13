@@ -2,12 +2,9 @@ const {PrismaClient, Prisma} = require('@prisma/client');
 const prisma = new PrismaClient();
 
 function prismaSingleton(){
-    if (this.client){
-        return this.client;
-    }else{
-        this.client = new PrismaClient();
-        return this.client;
-    }
+    return prisma;
 }
 
 module.exports = prismaSingleton;
+
+// Node cacheia o objeto.

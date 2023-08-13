@@ -2,7 +2,7 @@
 
 
 const {BadRequestError} = require('./errors');
-const {Prisma} = require('@prisma/client');
+const {Prisma } = require('@prisma/client');
 const prismaSingleton = require('./prisma');
 const prisma = prismaSingleton();
 

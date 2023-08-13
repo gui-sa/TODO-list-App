@@ -10,8 +10,11 @@ afterEach(()=>{
     jest.restoreAllMocks();
 });
 
+
+
+
 describe("Service users - createEmptyUser",()=>{
-    test("All params received",async ()=>{
+    test("All params received - Create a new User",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"gui.teste@gmail.com",
@@ -26,7 +29,7 @@ describe("Service users - createEmptyUser",()=>{
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
     });
-    test("Params needed only",async ()=>{
+    test("Params needed only - create a new user",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
         };
@@ -39,7 +42,9 @@ describe("Service users - createEmptyUser",()=>{
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
     });
-    test("Params is missing",async ()=>{
+    test("Params is missing - return 424",async ()=>{
+        // CUIDADO :  nem sempre o que voce espera eh o que acontece
+        // A descricao do teste deve ser com base no que foi realmente testado
         const newUser = {
             email:"gui.teste@gmail.com",
         };
@@ -53,7 +58,7 @@ describe("Service users - createEmptyUser",()=>{
         expect(res.send).toHaveBeenCalled();
 
     });
-    test("Repeating a unique member",async ()=>{
+    test("Repeating a unique member - return 409",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"gui.teste@gmail.com",
@@ -66,6 +71,8 @@ describe("Service users - createEmptyUser",()=>{
         jest.spyOn(prisma.users,"create").mockImplementation((obj)=>{
             throw new Prisma.PrismaClientKnownRequestError("Same existing client",{code:'KnowRequest'});
         });
+        // Quando o mock eh muito aterrorizante uma dica eh criar uma funcao envelope simples.
+        // trade: essa funcao envelope nao eh testada... por um outro lado sua baixa complexidade facilita o teste
         await users_services.createEmptyUser(req,res);
         expect(res.status).toHaveBeenCalledWith(409); 
         expect(res.send).toHaveBeenCalled();
