@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const main_controller = require('./../controllers/main');
+const main_controller = require('../controllers/main');
 const todos_router = require('./todos');
 const users_router = require('./users');
 

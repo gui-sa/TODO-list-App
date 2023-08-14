@@ -7,9 +7,7 @@ User Requirements:
 [-] You can create, edit and delete TODO items, and lists
 [x] You can move TODO items from a list to another list
 
-
-
-System Requirements:.;.
+System Requirements::
 [x] 1 route for creating an empty TODO list (POST)
     [x] 1 route for creating an empty user (POST)
 [-] 1 route for returning all TODO lists that exists, and their sizes

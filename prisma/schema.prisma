@@ -32,7 +32,7 @@ datasource db {
 model users {
   id    Int       @id @default(autoincrement())
   name  String    @db.VarChar(150)
-  email String?   @db.VarChar(100) @unique
+  email String   @db.VarChar(100) @unique
   birth DateTime?     
   todos todos[]
 }

@@ -78,7 +78,8 @@ describe("POST /users/newuser", ()=>{
   });
   test("should create a new user 'Gobinha bacana2' in the 'test_test_app' database", async ()=>{
     const newUser = {
-      name: "Gobinha bacana2"
+      name: "Gobinha bacana2",
+      email: "Gobinha2@gmail.com"
     };
     const response = await request(app)
                           .post('/users/newuser')
@@ -112,6 +113,7 @@ describe("POST /users/newuser", ()=>{
     expect(response.statusCode).toBe(500);
   });
 });
+
 
 afterAll(async () => {
   await new Promise((resolve) => setTimeout(() => resolve(), 500)); // avoid jest open handle error
