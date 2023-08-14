@@ -87,7 +87,7 @@ describe("POST /users/newuser", ()=>{
                           .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(201);
   });
-  test("shouldnt create a new user returning 424", async ()=>{
+  test("shouldnt create a new user returning 400", async ()=>{
     const newUser = {
       email: "gobinha.bacana2@snail.com"
     };
@@ -95,7 +95,7 @@ describe("POST /users/newuser", ()=>{
                           .post('/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
-    expect(response.statusCode).toBe(424);
+    expect(response.statusCode).toBe(400);
   });
   test("server is down - returning 500", async ()=>{
     const newUser = {

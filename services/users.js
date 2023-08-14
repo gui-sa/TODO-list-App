@@ -1,8 +1,7 @@
 'use strict'
 
 
-const {BadRequestError} = require('./errors');
-const {Prisma } = require('@prisma/client');
+const {BadRequestError,ErrorHandler} = require('./errors');
 const prismaSingleton = require('./prisma');
 const prisma = prismaSingleton();
 
@@ -16,6 +15,7 @@ const validateUserCreation = function(user){
 }
 // Correcao: servicos nao deveria lidar com req,res... Quem lida com isso eh a camada de controle
 // Por isso foi osso testar.
+// Nao faz sentido testar o prisma porque teoricamente esse servico eh safe
 const createEmptyUser = async function(req,res){
         try{
         const user = validateUserCreation(req.body);
@@ -26,48 +26,11 @@ const createEmptyUser = async function(req,res){
             }});
         return res.status(201).send();
         }catch(e){
-            if(e instanceof BadRequestError){
-                return res.status(424).send(e);
-            }else if(e instanceof Prisma.PrismaClientKnownRequestError){
-                return res.status(409).send(e);
-            }
-            return res.status(500).send(e); 
+            res.status(ErrorHandler(e)).send(e);
         };
 }
 
-const validateUserFind = function(email){
-    if (typeof email === 'string'){
-        return email;
-    }else{
-        throw new BadRequestError("Strange data received");
-    }
-}
-
-// Correcao: servicos nao deveria lidar com req,res... Quem lida com isso eh a camada de controle
-// Por isso foi osso testar.
-const findUserByEmail = async function(req,res){
-    try{
-        const searchEmail = validateUserFind(req.body);
-        const dataResponse = await prisma.users.findFirst({
-            where:{
-                email:{
-                    startsWith:searchEmail
-                }
-            }
-        });
-        return res.status(200).send(dataResponse);
-    }catch(e){
-        if(e instanceof BadRequestError){
-            return res.status(400).send(e);
-        }else if(e instanceof Prisma.PrismaClientUnknownRequestError){
-            return res.status(204).send({});
-        }else{
-            return res.status(500).send(e); 
-        }
-    }
-}
 
 module.exports = {
-    createEmptyUser,
-    findUserByEmail
+    createEmptyUser
 }
