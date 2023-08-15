@@ -4,9 +4,8 @@ const {BadRequestError, DBProblemError} = require('./errors');
 const prismaSingleton = require('./prisma');
 const prisma = prismaSingleton();
 
-
 const validateTodo = function(todo){
-    if ((todo.user_id)&&(todo.name)){
+    if ((typeof todo.user_id === 'number')&&(typeof todo.name === 'string')){
         return todo;
     }else{
         throw new BadRequestError("Minimum user properties is missing");
