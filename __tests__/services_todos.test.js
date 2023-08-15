@@ -4,6 +4,7 @@ const todos_controller = require('./../controllers/todos');
 const todos_services = require('./../services/todos');
 const {Prisma} = require('@prisma/client');
 const prismaSingleton = require('./../services/prisma');
+const { PrismaClientInitializationError } = require('@prisma/client/runtime/library');
 const prisma = prismaSingleton();
 
 // You can skip others tests in development by using test.only();
@@ -11,82 +12,123 @@ const prisma = prismaSingleton();
 // Example... If you want to run just one specific file: 
     // npm run test -- ./__tests__/services_todos.test.js 
 
+require('dotenv').config({path:`${__dirname}/../.env-test`});
+process.env.DATABASE_URL = process.env.DATABASE_URL_TESTE;
+
+// Em produção voce possui duas diferenças primordiais: 
+// 1 - Voce naturalmente não enxerga ele pois ele estara na VPC
+// 2 - Se voce quiser testar, de qualquer maneira terá que subir um DB local
+
+
+beforeAll( async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+});
+
+afterAll ( async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+});    
+        
 afterEach(()=>{
     jest.restoreAllMocks();
 });
 
-describe("Create a role new Todo",()=>{
-    test("Enters userEmail, todoName, todoDescription within object and return http status 201", async ()=>{
-        const frontObj = {
+// Unit test should test the most possible. You mock only when its not possible to test it.
+describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
+    test("Enters {email, name, description} returning http status 201", async ()=>{
+        const userThere = await prisma.users.create({data:{
+            name:"Testenildo",
             email:"teste@snails.com",
-            name:"Fazer um teste",
-            description: "Importante testar"
-        };
-        jest.spyOn(prisma.users,"findFirst").mockReturnValue({id:Math.floor(Math.random()*1000)});
-        jest.spyOn(todos_services,"createEmptyTodo").mockImplementation(obj=>obj);
-        const req = {body:{...frontObj}};
+            birth: null
+        }});
+        const req = {body:{
+            email:"teste@snails.com",
+            name:"Fazer Cafe para seu Teste",
+            description:"Isso eh uma descricao"
+        }};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
-        res.send = jest.fn().mockReturnValue(res);        
+        res.send = jest.fn().mockReturnValue(res);
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(201);
-        expect(res.send).toBeCalled();
     });
-    test("Return http status 400 - bad request user is missing", async ()=>{
-        const frontObj = {
-            name:"Fazer um teste",
-            description: "Importante testar"
-        };
-        jest.spyOn(prisma.users,"findFirst").mockReturnValue({});
-        jest.spyOn(todos_services,"createEmptyTodo").mockImplementation(obj=>obj);
-        const req = {body:{...frontObj}};
+    test("Return http status 409 - bad request user is missing", async ()=>{
+        const req = {body:{
+            name:"Fazer Cafe para seu Testee",
+            description:"Isso eh uma descricaoo"
+        }};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
-        res.send = jest.fn().mockReturnValue(res);        
+        res.send = jest.fn().mockReturnValue(res);
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(400);
-        expect(res.send).toBeCalled();
     });
     test("Return http status 400 - bad request name is missing", async ()=>{
-        const frontObj = {
+        const req = {body:{
             email:"teste@snails.com",
-            description: "Importante testar"
-        };
-        jest.spyOn(prisma.users,"findFirst").mockReturnValue({});
-        jest.spyOn(todos_services,"createEmptyTodo").mockImplementation(obj=>obj);
-        const req = {body:{...frontObj}};
+            description:"Isso eh uma descricao"
+        }};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
-        res.send = jest.fn().mockReturnValue(res);        
+        res.send = jest.fn().mockReturnValue(res);
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(400);
-        expect(res.send).toBeCalled();
     });
-    test("Return http status 500 - server is down", async ()=>{
-        const frontObj = {
-            email:"teste@snails.com",
-            name:"Fazer um teste",
-            description: "Importante testar"
-        };
-        jest.spyOn(prisma.users,"findFirst").mockImplementation(()=>{
-            throw new Prisma.PrismaClientInitializationError("Server is Down");
-        });
-        jest.spyOn(todos_services,"createEmptyTodo").mockImplementation(()=>{
-            throw new Prisma.PrismaClientInitializationError("Server is Down");
-        });
-        const req = {body:{...frontObj}};
+    test("Return http status 409 - email do not exist", async ()=>{
+        const req = {body:{
+            email:"testeStranger@snails.com",
+            name:"Fazer Cafe para seu Testee",
+            description:"Isso eh uma descricaoo"
+        }};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
-        res.send = jest.fn().mockReturnValue(res);        
+        res.send = jest.fn().mockReturnValue(res);
+        await todos_controller.createEmptyTodo(req,res);
+        expect(res.status).toBeCalledWith(409);
+    })
+    test("Return http status 500 - server is down", async ()=>{
+        const req = {body:{
+            email:"testeStranger@snails.com",
+            name:"Fazer Cafe para seu Testee",
+            description:"Isso eh uma descricaoo"
+        }};
+        jest.spyOn(prisma.users,"findFirstOrThrow").mockImplementation(()=>{
+            throw new PrismaClientInitializationError;
+        });
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(500);
-        expect(res.send).toBeCalled();
     });
 });
 
-describe("Get all todos",()=>{
-    test.todo("Return http status 200");
-    test.todo("Receive prisma error returning 500 ");
+describe("Tests 'findAllTodos' from todos controller: ",()=>{
+    test("Return http status 200", async ()=>{
+        await prisma.todos.deleteMany({where:{}});
+        await prisma.users.deleteMany({where:{}});
+        const req = {};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await todos_controller.findAllTodos(req,res);
+        expect(res.status).toBeCalledWith(200);
+        expect(res.send).toBeCalled();
+        expect(res.send).not.toBeCalledWith(undefined);
+    });
+    test("Receive prisma error returning 500 ", async ()=>{
+        jest.spyOn(prisma.todos,"findMany").mockImplementation(()=>{
+            throw new Prisma.PrismaClientInitializationError("Server is down");
+        })
+        const req = {};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await todos_controller.findAllTodos(req,res);
+        expect(res.status).toBeCalledWith(500);
+        expect(res.send).toBeCalled();
+    });
 });
 
 

@@ -27,7 +27,8 @@ const findAllTodos = async function(){
     return await prisma.todos.findMany({
         select:{
             name:true,
-            description:true,
+            todo_parent_id:true,
+            description:true
         }
     });
 }

@@ -1,6 +1,7 @@
 'use strict'
 
 
+const { Prisma } = require('@prisma/client');
 const {BadRequestError,ErrorHandler} = require('./errors');
 const prismaSingleton = require('./prisma');
 const prisma = prismaSingleton();
@@ -30,7 +31,20 @@ const createEmptyUser = async function(req,res){
         };
 }
 
+const getUserByEmail = async function(searchEmail){
+    if(typeof searchEmail==='string'){
+        const userReceived =  await prisma.users.findFirstOrThrow({
+            where:{
+                email:searchEmail
+            }
+        });
+        return userReceived;
+    }else{
+        throw new BadRequestError("To get an email it should be valid");
+    }
+}
 
 module.exports = {
-    createEmptyUser
+    createEmptyUser,
+    getUserByEmail
 }

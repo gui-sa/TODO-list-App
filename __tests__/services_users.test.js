@@ -3,20 +3,35 @@
 const { Prisma } = require('@prisma/client');
 const {BadRequestError} = require('./../services/errors');
 const users_services = require('./../services/users');
+const users_controller = require('./../controllers/users');
 const prismaSingleton = require('./../services/prisma');
 const prisma = prismaSingleton();
+
+
+require('dotenv').config({path:`${__dirname}/../.env-test`});
+process.env.DATABASE_URL = process.env.DATABASE_URL_TESTE;
+
 
 // You can skip others tests in development by using test.only();
 // You can inject things into npm run test by using ' -- '
 // Example... If you want to run just one specific file: 
     // npm run test -- ./__tests__/services_users.test.js 
 
+beforeAll( async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+});
+
+afterAll ( async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+});    
+
 afterEach(()=>{
     jest.restoreAllMocks();
 });
 
-
-describe("Service users - createEmptyUser",()=>{
+describe("Tests without DB real connection 'createEmptyUser' from user services",()=>{
     test("All params received - Create a new User",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
@@ -100,6 +115,58 @@ describe("Service users - createEmptyUser",()=>{
         expect(res.send).toHaveBeenCalled();
 
     });
+});
+
+// Aqui eu testarei o maximo possivel... com banco de dados... Sem necessariamente testar as rotas pois tenho acesso ao banco de dados
+// Acima eu simulei o DB fingindo que nao tenho acesso a ele.
+// But, now, I am testing with its function... because actually I can
+// Remember that You should test the maximum as possible
+describe("Tests 'getUserByEmail' from user controller",()=>{
+    test("Enters {email} and receive the entire user in which has its email with http status 200", async ()=>{
+        const req = {body:{email:"teste@snails.com"}};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        const userThere = await prisma.users.create({data:{
+            name:"Testenildo",
+            email:"teste@snails.com",
+            birth: null
+        }});
+        await users_controller.getUserByEmail(req,res);
+        expect(res.status).toBeCalledWith(200);
+        expect(res.send).toBeCalledWith(userThere);
+    });
+    test("Enters {email} and receive {} with http status 409", async ()=>{
+        const req = {body:{email:"testeStrange@snails.com"}};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await users_controller.getUserByEmail(req,res);
+        expect(res.status).toBeCalledWith(409);
+        expect(res.send).toBeCalled();
+    });
+    test("Enters {} and receive {} with http status 400 ", async ()=>{
+        const req = {body:{}};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await users_controller.getUserByEmail(req,res);
+        expect(res.status).toBeCalledWith(400);
+        expect(res.send).toBeCalled();
+    });
+    test("Enters {email} and receive http status 500 - db server is down", async ()=>{
+        jest.spyOn(prisma.users,"findFirstOrThrow").mockImplementation(()=>{
+            throw new Prisma.PrismaClientInitializationError("Server is down");
+        });
+        const req = {body:{email:"teste@snails.com"}};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await users_controller.getUserByEmail(req,res);
+        expect(res.status).toBeCalledWith(500);
+        expect(res.send).toBeCalled();
+    });
+        
 });
 
 afterAll(async () => {

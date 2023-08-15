@@ -1,6 +1,7 @@
 'use strict'
 
 const todo_services = require('./../services/todos');
+const users_services = require('./../services/users');
 const {ErrorHandler, BadRequestError} = require('./../services/errors');
 const prismaSingleton = require('./../services/prisma');
 const prisma = prismaSingleton();
@@ -17,10 +18,7 @@ const validateEmptyTodoDTO = function(todo){
 exports.createEmptyTodo = async function(req,res){
     try{
         const newTodo = validateEmptyTodoDTO(req.body);
-        const userRequested = await prisma.users.findFirst({
-            select:{id:true},
-            where:{email:newTodo.email}
-        });
+        const userRequested = await users_services.getUserByEmail(newTodo.email);
         const todo = {
             user_id: userRequested.id,
             name: newTodo.name,
