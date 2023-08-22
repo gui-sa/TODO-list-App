@@ -15,7 +15,8 @@ System Requirements::
     [x] Create must get todo_parent_id
         [x] createEmptyTodo does not check the existence of its ID, returning a 409 error.
             ! Client will do this thru findAllTodos - I am returning its ID 
-[] 1 route for returning all TODO items on a TODO list (GET + pagination)
+[x] 1 route for returning all TODO items on a TODO list (GET + pagination)
+    ! Client will need to know its ID because ID is the unique 'unique' member;
 [] 1 route for editing an existing TODO list
 [] 1 route for deleting an existing TODO list
 [] 1 route for creating a new TODO item (POST) on an existing TODO list

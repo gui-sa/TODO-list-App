@@ -166,7 +166,6 @@ describe("#4 GET /todos/allTodos",()=>{
     await prisma.users.deleteMany({where:{}});
     const response = await request(app)
                     .get('/todos/alltodos');
-    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toEqual([]);
   });
@@ -174,7 +173,7 @@ describe("#4 GET /todos/allTodos",()=>{
 
 // /todos/newtodo
 describe("#5 Tests route: POST /todos/newtodo",()=>{
-  test("Send {email,name,description} receives http status 201", async ()=>{
+  test("#5.1 Send {email,name,description} receives http status 201", async ()=>{
     const userThere = await prisma.users.create({data:{
         name:"Testenildo5",
         email:"teste5@snails.com",
@@ -193,7 +192,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     expect(response.statusCode).toBe(201);
   });
 
-  test("Send {email,name, todo_parent_id, description} receives http status 201", async ()=>{
+  test("#5.2 Send {email,name, todo_parent_id, description} receives http status 201", async ()=>{
     const anyExistingTodo = await request(app)
                   .get('/todos/alltodos');
     expect(anyExistingTodo.statusCode).toBe(200);
@@ -213,7 +212,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
   });
 
 
-  test("Send {name, description} receives http status 400", async ()=>{
+  test("#5.3 Send {name, description} receives http status 400", async ()=>{
     const newTodo = {
       name:"Fazer Cafe para seu Teste de Integracao 2 ",
       description:"Isso eh uma descricao de Integracao 2"
@@ -226,7 +225,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
 
   });
 
-  test("Send {email, description} receives http status 400", async ()=>{
+  test("#5.4 Send {email, description} receives http status 400", async ()=>{
     const newTodo = {
       email:"teste5@snails.com",
       description:"Isso eh uma descricao de Integracao 2"
@@ -239,7 +238,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
 
   });
 
-  test("Send {email,name} receives http status 201", async ()=>{
+  test("#5.5 Send {email,name} receives http status 201", async ()=>{
     const newTodo = {
       email:"teste5@snails.com",
       name:"Fazer Cafe para seu Teste de Integracao 5.2",
@@ -252,7 +251,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     expect(response.statusCode).toBe(201);
   });
 
-  test("Send {email,name,description} with server down receives http status 500", async ()=>{
+  test("#5.6 Send {email,name,description} with server down receives http status 500", async ()=>{
     jest.spyOn(prisma.users,"findFirstOrThrow").mockImplementation(()=>{
       throw new Prisma.PrismaClientInitializationError("Server is Down");
     });
@@ -268,6 +267,76 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(500);
+  });
+});
+
+// /todos/fromtodo
+describe("#6 Tests 'findTasksFromTodoId' from todos controller",()=>{
+  test("#6.1 Deletes all data, creates a user, creates a root todo, creates a task to that todo. Enters {id} and returns status 200", async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+
+    const userThere = await prisma.users.create({data:{
+      name:"Testenildo6",
+      email:"teste6@snails.com",
+      birth: null
+    }});
+
+    const newTodo1 = {
+        email:"teste6@snails.com",
+        name:"Fazer Cafe para seu Teste de Integracao",
+        description:"Isso eh uma descricao de Integracao"
+    };
+    const response = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo1)
+                  .set('Content-Type', 'application/json');
+    expect(response.statusCode).toBe(201);
+    expect(response.body.id).not.toBe(undefined);
+
+    const newTodo2 = {
+      email:"teste6@snails.com",
+      name:"Sub Task: Fazer Cafe para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao",
+      todo_parent_id: response.body.id
+    };
+    const response2 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo2)
+                  .set('Content-Type', 'application/json');
+    expect(response2.statusCode).toBe(201);
+    expect(response2.body.todo_parent_id).toBe(response.body.id);
+
+    const responseFinal = await request(app)
+                  .get('/todos/fromtodo')
+                  .send({skip:0,take:10, id:response.body.id})
+                  .set('Content-Type', 'application/json');
+    expect(responseFinal.statusCode).toBe(200);
+  });
+  test("#6.2 Enters {} and returns status 400 and a empty []", async ()=>{
+    const response = await request(app)
+                            .get('/todos/fromtodo')
+                            .send({})
+                            .set('Content-Type', 'application/json');
+    expect(response.statusCode).toBe(400);
+  });
+  test("#6.3 Enters {id:notKnown} and returns status 200 and a []", async ()=>{
+    const responseFinal = await request(app)
+                            .get('/todos/fromtodo')
+                            .send({skip:0,take:10, id:Math.floor(Math.random()*1000)})
+                            .set('Content-Type', 'application/json');
+    expect(responseFinal.statusCode).toBe(200);
+    expect(responseFinal.body).toEqual([]);
+  });
+  test("#6.4 Server is down returning 500", async ()=>{
+    jest.spyOn(prisma.todos,"findMany").mockImplementation(()=>{
+      throw new Prisma.PrismaClientInitializationError("Server is Down");
+    });
+    const responseFinal = await request(app)
+                          .get('/todos/fromtodo')
+                          .send({skip:0,take:10, id:Math.floor(Math.random()*1000)})
+                          .set('Content-Type', 'application/json');
+    expect(responseFinal.statusCode).toBe(500);
   });
 });
 

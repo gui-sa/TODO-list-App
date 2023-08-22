@@ -35,12 +35,44 @@ const findAllTodos = async function(paginationSettings){
             id:true,
             name:true,
             todo_parent_id:true,
-            description:true
+            description:true,
+            completed:true
         }
     });
 }
 
+function validateFindTasksFromTodoId(searchData){
+    if((typeof searchData.id === 'number')&&(typeof searchData.skip === 'number')&&(typeof searchData.take === 'number')){
+        return searchData;
+    }else{
+        throw new BadRequestError("searchData is missing")
+    }
+
+}
+
+const findTasksFromTodoId = async function(searchData){
+    const verifiedSearchData = validateFindTasksFromTodoId(searchData);
+    return await prisma.todos.findMany({
+        skip:verifiedSearchData.skip,
+        take:verifiedSearchData.take ,
+        orderBy: {
+            id: 'asc'
+        },
+        select:{
+            id:true,
+            name:true,
+            todo_parent_id:true,
+            description:true,
+            completed:true
+        },
+        where:{
+            todo_parent_id:verifiedSearchData.id
+        }
+    });
+};
+
 module.exports = {
+    findTasksFromTodoId,
     findAllTodos,
     createEmptyTodo
 }   

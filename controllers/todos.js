@@ -25,8 +25,8 @@ exports.createEmptyTodo = async function(req,res){
             todo_parent_id: newTodo.todo_parent_id || null,
             description: newTodo.description || null
         };
-        await todo_services.createEmptyTodo(todo);
-        res.status(201).send();
+        const todoCreated = await todo_services.createEmptyTodo(todo);
+        res.status(201).send(todoCreated);
     }catch(e){
         res.status(ErrorHandler(e)).send(e);   
     }
@@ -38,6 +38,16 @@ exports.findAllTodos = async function(req,res){
         const todos = await todo_services.findAllTodos(paginationSettings);    
         res.status(200).send(todos);    
     }catch(e){
-        res.status(500).send(e);
+        res.status(ErrorHandler(e)).send(e);
     }
 };
+
+exports.findTasksFromTodoId = async function(req,res){
+    try{
+        const searchData = req.body;
+        const todos = await todo_services.findTasksFromTodoId(searchData);
+        res.status(200).send(todos);
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
+}
