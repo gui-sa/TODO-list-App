@@ -22,6 +22,7 @@ exports.createEmptyTodo = async function(req,res){
         const todo = {
             user_id: userRequested.id,
             name: newTodo.name,
+            todo_parent_id: newTodo.todo_parent_id || null,
             description: newTodo.description || null
         };
         await todo_services.createEmptyTodo(todo);

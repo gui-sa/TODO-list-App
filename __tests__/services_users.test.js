@@ -31,8 +31,8 @@ afterEach(()=>{
     jest.restoreAllMocks();
 });
 
-describe("Tests without DB real connection 'createEmptyUser' from user services",()=>{
-    test("All params received - Create a new User",async ()=>{
+describe("#1 Tests without DB real connection 'createEmptyUser' from user services",()=>{
+    test("#1.1 All params received - Create a new User",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"gui.teste@gmail.com",
@@ -47,7 +47,7 @@ describe("Tests without DB real connection 'createEmptyUser' from user services"
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
     });
-    test("Params needed only - create a new user",async ()=>{
+    test("#1.2 Params needed only - create a new user",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"yeah.snail.com"
@@ -61,7 +61,7 @@ describe("Tests without DB real connection 'createEmptyUser' from user services"
         expect(res.status).toHaveBeenCalledWith(201); 
         expect(res.send).toHaveBeenCalled();
     });
-    test("Params is missing - return 400",async ()=>{
+    test("#1.3 Params is missing - return 400",async ()=>{
         // CUIDADO :  nem sempre o que voce espera eh o que acontece
         // A descricao do teste deve ser com base no que foi realmente testado
         const newUser = {
@@ -77,7 +77,7 @@ describe("Tests without DB real connection 'createEmptyUser' from user services"
         expect(res.send).toHaveBeenCalled();
 
     });
-    test("Repeating a unique member - return 409",async ()=>{
+    test("#1.4 Repeating a unique member - return 409",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"gui.teste@gmail.com",
@@ -97,7 +97,7 @@ describe("Tests without DB real connection 'createEmptyUser' from user services"
         expect(res.send).toHaveBeenCalled();
 
     });
-    test("Server is out",async ()=>{
+    test("1.5 Server is out",async ()=>{
         const newUser = {
             name:"Guilherme Teste",
             email:"gui.teste@gmail.com",
@@ -121,22 +121,24 @@ describe("Tests without DB real connection 'createEmptyUser' from user services"
 // Acima eu simulei o DB fingindo que nao tenho acesso a ele.
 // But, now, I am testing with its function... because actually I can
 // Remember that You should test the maximum as possible
-describe("Tests 'getUserByEmail' from user controller",()=>{
-    test("Enters {email} and receive the entire user in which has its email with http status 200", async ()=>{
-        const req = {body:{email:"teste@snails.com"}};
+describe("#2 Tests 'getUserByEmail' from user controller",()=>{
+    test("#2.1 Enters {email} and receive the entire user in which has its email with http status 200", async ()=>{
+        await prisma.todos.deleteMany({where:{}});
+        await prisma.users.deleteMany({where:{}});
+        const req = {body:{email:"teste2@snails.com"}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
         const userThere = await prisma.users.create({data:{
-            name:"Testenildo",
-            email:"teste@snails.com",
+            name:"Testenildo2",
+            email:"teste2@snails.com",
             birth: null
         }});
         await users_controller.getUserByEmail(req,res);
         expect(res.status).toBeCalledWith(200);
         expect(res.send).toBeCalledWith(userThere);
     });
-    test("Enters {email} and receive {} with http status 409", async ()=>{
+    test("#2.2 Enters not saved {email} and receive {} with http status 409", async ()=>{
         const req = {body:{email:"testeStrange@snails.com"}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
@@ -145,7 +147,7 @@ describe("Tests 'getUserByEmail' from user controller",()=>{
         expect(res.status).toBeCalledWith(409);
         expect(res.send).toBeCalled();
     });
-    test("Enters {} and receive {} with http status 400 ", async ()=>{
+    test("#2.3 Enters {} and receive {} with http status 400 ", async ()=>{
         const req = {body:{}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
@@ -154,11 +156,11 @@ describe("Tests 'getUserByEmail' from user controller",()=>{
         expect(res.status).toBeCalledWith(400);
         expect(res.send).toBeCalled();
     });
-    test("Enters {email} and receive http status 500 - db server is down", async ()=>{
+    test("#2.4 Enters saved {email} and receive http status 500 - db server is down", async ()=>{
         jest.spyOn(prisma.users,"findFirstOrThrow").mockImplementation(()=>{
             throw new Prisma.PrismaClientInitializationError("Server is down");
         });
-        const req = {body:{email:"teste@snails.com"}};
+        const req = {body:{email:"teste2@snails.com"}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);

@@ -35,17 +35,17 @@ afterEach(()=>{
 });
 
 // Unit test should test the most possible. You mock only when its not possible to test it.
-describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
-    test("Enters {email, name, description} returning http status 201", async ()=>{
+describe("#1 Tests 'createEmptyTodo' from todos controller: ",()=>{
+    test("#1.1 Enters {email, name, description} returning http status 201", async ()=>{
         const userThere = await prisma.users.create({data:{
             name:"Testenildo",
             email:"teste@snails.com",
             birth: null
         }});
         const req = {body:{
-            email:"teste@snails.com",
+            email:"teste@snails.com"    ,
             name:"Fazer Cafe para seu Teste",
-            description:"Isso eh uma descricao"
+            description:"Isso eh uma descricao",
         }};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
@@ -53,7 +53,7 @@ describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(201);
     });
-    test("Return http status 409 - bad request user is missing", async ()=>{
+    test("#1.2 Return http status 409 - bad request user is missing", async ()=>{
         const req = {body:{
             name:"Fazer Cafe para seu Testee",
             description:"Isso eh uma descricaoo"
@@ -64,7 +64,7 @@ describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(400);
     });
-    test("Return http status 400 - bad request name is missing", async ()=>{
+    test("#1.3 Return http status 400 - bad request name is missing", async ()=>{
         const req = {body:{
             email:"teste@snails.com",
             description:"Isso eh uma descricao"
@@ -75,7 +75,7 @@ describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(400);
     });
-    test("Return http status 409 - email do not exist", async ()=>{
+    test("#1.4 Return http status 409 - email do not exist", async ()=>{
         const req = {body:{
             email:"testeStranger@snails.com",
             name:"Fazer Cafe para seu Testee",
@@ -87,7 +87,21 @@ describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
         await todos_controller.createEmptyTodo(req,res);
         expect(res.status).toBeCalledWith(409);
     })
-    test("Return http status 500 - server is down", async ()=>{
+    test('#1.6 return http status 409 - todo id shouldnt exist', async ()=>{
+        const req = {body:{
+            email:"teste@snails.com"    ,
+            name:"Fazer Cafe para seu Teste",
+            description:"Isso eh uma descricao",
+            todo_parent_id: 10000
+        }};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await todos_controller.createEmptyTodo(req,res);
+        expect(res.status).toBeCalledWith(409);
+    });
+
+    test("#1.5 Return http status 500 - server is down", async ()=>{
         const req = {body:{
             email:"testeStranger@snails.com",
             name:"Fazer Cafe para seu Testee",
@@ -104,8 +118,8 @@ describe("Tests 'createEmptyTodo' from todos controller: ",()=>{
     });
 });
 
-describe("Tests 'findAllTodos' from todos controller: ",()=>{
-    test("Return http status 200", async ()=>{
+describe("#2 Tests 'findAllTodos' from todos controller: ",()=>{
+    test("#2.1 Return http status 200", async ()=>{
         await prisma.todos.deleteMany({where:{}});
         await prisma.users.deleteMany({where:{}});
         const req = {};
@@ -117,7 +131,7 @@ describe("Tests 'findAllTodos' from todos controller: ",()=>{
         expect(res.send).toBeCalled();
         expect(res.send).not.toBeCalledWith(undefined);
     });
-    test("Receive prisma error returning 500 ", async ()=>{
+    test("#2.2 Receive prisma error returning 500 ", async ()=>{
         jest.spyOn(prisma.todos,"findMany").mockImplementation(()=>{
             throw new Prisma.PrismaClientInitializationError("Server is down");
         })

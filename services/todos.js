@@ -14,18 +14,20 @@ const validateTodo = function(todo){
 
 const createEmptyTodo = async function(newTodo){
     const todo = validateTodo(newTodo);
-    await prisma.todos.create({data:{
+    const response = await prisma.todos.create({data:{
         user_id: todo.user_id,
         todo_parent_id : todo.todo_parent_id || null,
         name : todo.name,
         description : todo.description || null,
         completed : todo.completed || false
         }});
+    return response;
 };
 
 const findAllTodos = async function(){
     return await prisma.todos.findMany({
         select:{
+            id:true,
             name:true,
             todo_parent_id:true,
             description:true
@@ -36,4 +38,4 @@ const findAllTodos = async function(){
 module.exports = {
     findAllTodos,
     createEmptyTodo
-}
+}   

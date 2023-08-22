@@ -11,7 +11,10 @@ System Requirements::
 [x] 1 route for creating an empty TODO list (POST)
     [x] 1 route for creating an empty user (POST)
 [-] 1 route for returning all TODO lists that exists, and their sizes
-    [] service that creates todo list must check user name
+    [x] service that creates todo list must check user name
+    [x] Create must get todo_parent_id
+        [x] createEmptyTodo does not check the existence of its ID, returning a 409 error.
+            ! Client will do this thru findAllTodos - I am returning its ID 
 [] 1 route for returning all TODO items on a TODO list (GET + pagination)
 [] 1 route for editing an existing TODO list
 [] 1 route for deleting an existing TODO list
@@ -19,84 +22,5 @@ System Requirements::
 [] 1 route for updating an existing TODO item (PATCH x PUT?)
 [] 1 route for deleting an existing TODO item (DELETE)
 [] 1 route for moving a TODO item from a list, to another list
-[] Import: the HTTP body on requests and response must be JSONs.
-[] Test it using command cURL or Postman!
-
-Testes:
-[x] Rota /teste
-    [x] Status 200
-    [x] Html
-[x] Rota *
-    [x] Status 200
-    [x] Html
-[] POST /todos
-    [] Rota /newtodo
-        [] Função createEmptyTodo
-            [] Unitario
-                [x] Todos os objetos preenchidos
-                    [x] Retorna 201
-                    [x] Retorna objeto identico enviado
-                [x] Somente objetos necessarios
-                    [x] Retorna 201
-                    [x] Retorna objeto identico enviado as demais propriedades estarao nulas ou default
-                [x] Objeto faltante
-                    [x] Deve retornar Erro `Propriedades Minimas Incompletas`
-                [x] Objeto vazio
-                    [x] Deve retornar Erro `Propriedades Minimas Incompletas`
-                [] Validação de propriedades
-                    [] id - nunca é enviado
-                        [x] Ignorado
-                        ?Ele é recebido?SIM
-                    [] user_id
-                        [] Deve apontar para ID existente
-                        [] Deve apontar para o ID do usuario logado
-                        !E se mais a frente precisar refatorar para apontar para um usuario?
-                    [] todo_parent_id
-                        [] Inteiro
-                        [] Deve apontar para um ID existente
-                            [] Diferente dele mesmo
-                    [] name
-                        [] String
-                        [] Deve existir
-                    [] description
-                        [] String
-                    [] completed
-                        [] falso por padrao
-                        [] Boolean
-                            ?O que acontece se eu passar algo estranho?
-                    [] extras 
-                        [] são ignorados
-            [] Integração
-                [] Banco de dados Teste isolado
-[] POST /users      
-    [] Rota /newuser
-        [] Funcao createEmptyUser:
-            [x] Todos os objetos preenchidos
-                [x] Retorna 201
-                [x] Retorna objeto identico enviado
-                [x] Retorna 409 - se tenta enviar mesmo objeto duas vezes, desobedecendo regra de unicidade
-            [x] Somente objetos necessarios
-                [x] Retorna 201
-                [] Retorna objeto identico enviado as demais propriedades estarao nulas ou default
-            [x] Objeto faltante
-                [x] Deve retornar Erro `Propriedades Minimas Incompletas`
-            [x] Objeto vazio
-                [x] Deve retornar Erro `Propriedades Minimas Incompletas`
-            [] Unitario
-                [] id
-                    ?Recebo ele de volta? SIM
-                [] name
-                    [] String
-                    [] Obrigatorio
-                [] email
-                    [] String
-                    [] Email Válido
-                [] birth
-                    [] DateTime se String for passada em yyyy-mm-dd
-                    [] null  se string nao for passada
-            [] Integração
-                [] Banco de dados Teste isolado
-
-                
-
-            
+[x] Import: the HTTP body on requests and response must be JSONs.
+[x] Test it using command cURL or Postman!
