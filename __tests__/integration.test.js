@@ -152,7 +152,9 @@ describe("#4 GET /todos/allTodos",()=>{
     expect(res2.status).toBeCalledWith(201);
 
     const response = await request(app)
-                    .get('/todos/allTodos');
+                    .get('/todos/allTodos')
+                    .send({skip:0,take:10})
+                    .set('Content-Type', 'application/json');
 
     expect(response.statusCode).toBe(200);
     expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");

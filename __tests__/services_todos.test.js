@@ -122,7 +122,7 @@ describe("#2 Tests 'findAllTodos' from todos controller: ",()=>{
     test("#2.1 Return http status 200", async ()=>{
         await prisma.todos.deleteMany({where:{}});
         await prisma.users.deleteMany({where:{}});
-        const req = {};
+        const req = {body:{skip:0,take:10}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);
@@ -131,11 +131,20 @@ describe("#2 Tests 'findAllTodos' from todos controller: ",()=>{
         expect(res.send).toBeCalled();
         expect(res.send).not.toBeCalledWith(undefined);
     });
+    test("#2.3 Return http status 200", async ()=>{
+        const req = {body:{}};
+        const res = {};
+        res.status = jest.fn().mockReturnValue(res);
+        res.send = jest.fn().mockReturnValue(res);
+        await todos_controller.findAllTodos(req,res);
+        expect(res.status).toBeCalledWith(200);
+        expect(res.send).toBeCalledWith([]);
+    });
     test("#2.2 Receive prisma error returning 500 ", async ()=>{
         jest.spyOn(prisma.todos,"findMany").mockImplementation(()=>{
             throw new Prisma.PrismaClientInitializationError("Server is down");
         })
-        const req = {};
+        const req = {body:{skip:0,take:10}};
         const res = {};
         res.status = jest.fn().mockReturnValue(res);
         res.send = jest.fn().mockReturnValue(res);

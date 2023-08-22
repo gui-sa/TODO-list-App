@@ -34,7 +34,8 @@ exports.createEmptyTodo = async function(req,res){
 
 exports.findAllTodos = async function(req,res){
     try{
-        const todos = await todo_services.findAllTodos();    
+        const paginationSettings = req.body;
+        const todos = await todo_services.findAllTodos(paginationSettings);    
         res.status(200).send(todos);    
     }catch(e){
         res.status(500).send(e);

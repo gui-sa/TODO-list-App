@@ -24,8 +24,13 @@ const createEmptyTodo = async function(newTodo){
     return response;
 };
 
-const findAllTodos = async function(){
+const findAllTodos = async function(paginationSettings){
     return await prisma.todos.findMany({
+        skip:paginationSettings.skip,
+        take:paginationSettings.take ,
+        orderBy: {
+            id: 'asc'
+        },
         select:{
             id:true,
             name:true,
