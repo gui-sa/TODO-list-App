@@ -386,6 +386,23 @@ describe("#7 DELETE todo /todos/delete:id",()=>{
   });
 });
 
+describe("#8 PUT /todos/edit",()=>{
+  test.todo("#8.1 Receives {id,name,description,todo_parent_id,completed} and return 201");
+  test.todo("#8.2 Receives {id,name,completed} and return 201");
+  test.todo("#8.3 Receives {id,name} and return 201");
+  test.todo("#8.3 Receives {strangeId,name} and return 409");
+  test.todo("#8.4 Receives {id} and return 400");
+  test.todo("#8.5 Receives {name} and return 400");
+  test.todo("#8.6 Receives {} and return 400");
+  test.todo("#8.7 Server is down returning 500");
+});
+
+describe("#9 PATCH /todos/complete?",()=>{
+  test.todo("9.1 /todos/complete?id returning 201");
+  test.todo("9.2 /todos/complete?invalidID returning 409");
+  test.todo("9.3 Server is down returning 500");
+});
+
 afterAll(async () => {
   await new Promise((resolve) => setTimeout(() => resolve(), 500)); // avoid jest open handle error
 });
