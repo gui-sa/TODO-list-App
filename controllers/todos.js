@@ -51,3 +51,21 @@ exports.findTasksFromTodoId = async function(req,res){
         res.status(ErrorHandler(e)).send(e);
     }
 }
+
+function validateDeleteTodoFromID(id){
+    if(typeof id ==='number'){
+        return id;
+    }else{
+        throw new BadRequestError("Id possui tipagem estranha");
+    }
+};
+
+exports.deleteTodoFromID = async function(req,res){
+    try{
+        const id = validateDeleteTodoFromID(+req.query.id);
+        const response = await todo_services.deleteTodoFromID(id);
+        res.status(202).send(response);
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
+}

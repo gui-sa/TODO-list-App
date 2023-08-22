@@ -271,7 +271,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
 });
 
 // /todos/fromtodo
-describe("#6 Tests 'findTasksFromTodoId' from todos controller",()=>{
+describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/fromtodo",()=>{
   test("#6.1 Deletes all data, creates a user, creates a root todo, creates a task to that todo. Enters {id} and returns status 200", async ()=>{
     await prisma.todos.deleteMany({where:{}});
     await prisma.users.deleteMany({where:{}});
@@ -337,6 +337,52 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller",()=>{
                           .send({skip:0,take:10, id:Math.floor(Math.random()*1000)})
                           .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(500);
+  });
+});
+
+// /todos/delete?id
+describe("#7 DELETE todo /todos/delete:id",()=>{
+
+  test("#7.1 Enters /todos/delete?validID returning 202", async ()=>{
+    await prisma.todos.deleteMany({where:{}});
+    await prisma.users.deleteMany({where:{}});
+
+    const userThere = await prisma.users.create({data:{
+      name:"Testenildo7",
+      email:"teste7@snails.com",
+      birth: null
+    }});
+
+    const newTodo = {
+        email:"teste7@snails.com",
+        name:"Fazer Cafe para seu Teste de Integracao",
+        description:"Isso eh uma descricao de Integracao"
+    };
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const response = await request(app)
+                        .delete(`/todos/delete?id=${response1.body.id}`);
+    expect(response.statusCode).toBe(202);
+  });
+
+  test("#7.2 Enters /todos/delete?InvalidID returnin 204", async ()=>{
+    const response = await request(app)
+                        .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
+    expect(response.statusCode).toBe(409);
+  });
+
+  test("#7.3 Server is down returning 500", async ()=>{
+    jest.spyOn(prisma.todos,"delete").mockImplementation(()=>{
+      throw new Prisma.PrismaClientInitializationError("Server is down");
+    })
+    const response = await request(app)
+                    .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
+    expect(response.statusCode).toBe(500);
   });
 });
 

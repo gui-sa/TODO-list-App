@@ -71,7 +71,17 @@ const findTasksFromTodoId = async function(searchData){
     });
 };
 
+
+const deleteTodoFromID = async function(idToRemove){
+    return await prisma.todos.delete({
+        where:{
+            id:idToRemove
+        }
+    });
+};
+
 module.exports = {
+    deleteTodoFromID,
     findTasksFromTodoId,
     findAllTodos,
     createEmptyTodo
