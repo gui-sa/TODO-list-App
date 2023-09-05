@@ -29,6 +29,8 @@ System Requirements::
 
 Legenda:
     [] --> Task
+        [-] --> Doing...
+        [x] --> Done and tested!
     ! --> Observacao
     = --> Resolvido pela mesma implementacao
 
