@@ -387,13 +387,13 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
 });
 
 describe.only("#8 PUT /todos/edit",()=>{
-  test("#8.1 Receives {id,name,description,todo_parent_id,completed} and return 201", async ()=>{
+  test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 201 and test it by finding it in DB", async ()=>{
     await prisma.users.deleteMany({where:{}});
     await prisma.todos.deleteMany({where:{}});
 
     await prisma.users.create({data:{
       name:"Testenildo8",
-      email:"teste7@snails.com",
+      email:"teste8@snails.com",
       birth: null
     }});
 
@@ -410,9 +410,9 @@ describe.only("#8 PUT /todos/edit",()=>{
     expect(response1.body.id).not.toEqual(undefined);
 
     const newTodo2 = {
-      email:"teste82@snails.com",
+      email:"teste8@snails.com",
       name:"Ferver agua paraa o cafe de Integracao2",
-      description:"Isso eh uma descricao de Integracao2",
+      description:"Isso eh uma descricao subtask de Integracao",
       todo_parent_id: response1.body.id,
     }
 
@@ -423,8 +423,10 @@ describe.only("#8 PUT /todos/edit",()=>{
     expect(response2.statusCode).toBe(201);
     expect(response2.body.id).not.toEqual(undefined);
 
+    //console.log("response2.body: \n", response2.body);
+
     const editedTodo = {
-      	id:response2.body.id,
+      	id: response2.body.id,
         name:"Essa tarefa foi editada por completo",
         description:"A descricao foi completamente editada",
         todo_parent_id:null,
@@ -435,19 +437,23 @@ describe.only("#8 PUT /todos/edit",()=>{
                   .put('/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
-    expect(response3.statusCode).toBe(201);
+    expect(response3.statusCode).toBe(205);
+
+    console.log("response3.body: \n", response3.body);
+    //console.log("editedTodo: \n", editedTodo);
 
     const responseFinal = await request(app)
-                  .get('/todos/fromtodo')
-                  .send({skip:0,take:1, id:response2.body.id})
+                  .get('/todos/allTodos')
+                  .send({skip:0,take:2})
                   .set('Content-Type', 'application/json');
-                  
+    //console.log("responseFinal.body: \n", responseFinal.body);
+    //console.log("editedTodo: \n", editedTodo);
     expect(responseFinal.statusCode).toBe(200);
-    expect(responseFinal.body.id).toBe(editedTodo.id);
-    expect(responseFinal.body.name).toBe(editedTodo.name);
-    expect(responseFinal.body.description).toBe(editedTodo.description);
-    expect(responseFinal.body.todo_parent_id).toBe(editedTodo.todo_parent_id);
-    expect(responseFinal.body.completed).toBe(editedTodo.completed);
+    expect(responseFinal.body[1].id).toBe(editedTodo.id);
+    expect(responseFinal.body[1].name).toBe(editedTodo.name);
+    expect(responseFinal.body[1].description).toBe(editedTodo.description);
+    expect(responseFinal.body[1].todo_parent_id).toBe(editedTodo.todo_parent_id);
+    expect(responseFinal.body[1].completed).toBe(editedTodo.completed);
   });
   test.todo("#8.2 Receives {id,name,completed} and return 201");
   test.todo("#8.3 Receives {id,name} and return 201");

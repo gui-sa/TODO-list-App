@@ -80,7 +80,21 @@ const deleteTodoFromID = async function(idToRemove){
     });
 };
 
+const updateEntireTodoFromID = async function(toEdit){
+    return await prisma.todos.update({
+        where:{ id: toEdit.id },
+        data:{
+            name: toEdit.name,
+            todo_parent_id: toEdit.todo_parent_id,
+            description: toEdit.description,
+            completed: toEdit.completed
+        },
+    });
+};
+
+
 module.exports = {
+    updateEntireTodoFromID,
     deleteTodoFromID,
     findTasksFromTodoId,
     findAllTodos,

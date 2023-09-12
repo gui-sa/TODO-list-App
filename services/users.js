@@ -20,12 +20,12 @@ const validateUserCreation = function(user){
 const createEmptyUser = async function(req,res){
         try{
         const user = validateUserCreation(req.body);
-        await prisma.users.create({data:{
+        const createdUser = await prisma.users.create({data:{
             name: user.name,
             email: user.email, 
             birth : user.birth ? new Date(user.birth) : null 
             }});
-        return res.status(201).send();
+        return res.status(201).send(createdUser);
         }catch(e){
             res.status(ErrorHandler(e)).send(e);
         };

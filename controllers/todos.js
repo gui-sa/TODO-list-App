@@ -68,4 +68,14 @@ exports.deleteTodoFromID = async function(req,res){
     }catch(e){
         res.status(ErrorHandler(e)).send(e);
     }
-}
+};
+
+exports.updateEntireTodoFromID = async function(req,res){
+    try{
+        const toEdit = req.body;
+        const response = await todo_services.updateEntireTodoFromID(toEdit);        
+        return res.status(205).send({pica:"No seu cu"});        
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
+};
