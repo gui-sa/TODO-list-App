@@ -73,9 +73,11 @@ exports.deleteTodoFromID = async function(req,res){
 exports.updateEntireTodoFromID = async function(req,res){
     try{
         const toEdit = req.body;
-        const response = await todo_services.updateEntireTodoFromID(toEdit);        
-        return res.status(205).send({pica:"No seu cu"});        
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);
+        const response = await todo_services.updateEntireTodoFromID(toEdit);
+        res.status(205).send(response);
+        // Como o status 205 proibe payload, ele vai enviar um ""
+        // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
+    }catch(err){
+        res.status(ErrorHandler(err)).send(err);
     }
-};
+}

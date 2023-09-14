@@ -386,7 +386,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
   });
 });
 
-describe.only("#8 PUT /todos/edit",()=>{
+describe("#8 PUT /todos/edit",()=>{
   test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 201 and test it by finding it in DB", async ()=>{
     await prisma.users.deleteMany({where:{}});
     await prisma.todos.deleteMany({where:{}});
@@ -426,7 +426,7 @@ describe.only("#8 PUT /todos/edit",()=>{
     //console.log("response2.body: \n", response2.body);
 
     const editedTodo = {
-      	id: response2.body.id,
+      	id:response2.body.id, 
         name:"Essa tarefa foi editada por completo",
         description:"A descricao foi completamente editada",
         todo_parent_id:null,
@@ -437,10 +437,12 @@ describe.only("#8 PUT /todos/edit",()=>{
                   .put('/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
-    expect(response3.statusCode).toBe(205);
-
-    console.log("response3.body: \n", response3.body);
+    //console.log("response3.body: \n", response3.body);
     //console.log("editedTodo: \n", editedTodo);
+    // FIM DO MISTERIO: o 205 PROIBE o envio de PAYLOAD
+    // Por isso o express nao enviava o objeto
+    expect(response3.statusCode).toBe(205);
+    expect(response3.body).toBe("");
 
     const responseFinal = await request(app)
                   .get('/todos/allTodos')

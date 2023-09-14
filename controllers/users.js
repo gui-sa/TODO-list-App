@@ -12,7 +12,7 @@ exports.createNewUser = function(req,res){
 exports.getUserByEmail = async function(req,res){
     try{
         const userReceived = await user_services.getUserByEmail(req.body.email);
-        console.log(userReceived);
+        //console.log(userReceived);
         res.status(200).send(userReceived);
     }catch(e){
         res.status(ErrorHandler(e)).send(e);
