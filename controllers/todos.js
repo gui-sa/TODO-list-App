@@ -70,11 +70,19 @@ exports.deleteTodoFromID = async function(req,res){
     }
 };
 
+const validatEdit = function(body){
+    if (body.id && (body.name || body.description || body.completed || body.todo_parent_id)){
+        return body;
+    }else{
+        throw new BadRequestError("Voce deve editar algo");
+    }
+};
+
 exports.updateEntireTodoFromID = async function(req,res){
     try{
-        const toEdit = req.body;
+        const toEdit = validatEdit(req.body);
         const response = await todo_services.updateEntireTodoFromID(toEdit);
-        res.status(205).send(response);
+        res.status(200).send(response);
         // Como o status 205 proibe payload, ele vai enviar um ""
         // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
     }catch(err){

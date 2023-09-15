@@ -387,7 +387,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
 });
 
 describe("#8 PUT /todos/edit",()=>{
-  test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 201 and test it by finding it in DB", async ()=>{
+  test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 200 and test it by finding it in DB", async ()=>{
     await prisma.users.deleteMany({where:{}});
     await prisma.todos.deleteMany({where:{}});
 
@@ -441,8 +441,7 @@ describe("#8 PUT /todos/edit",()=>{
     //console.log("editedTodo: \n", editedTodo);
     // FIM DO MISTERIO: o 205 PROIBE o envio de PAYLOAD
     // Por isso o express nao enviava o objeto
-    expect(response3.statusCode).toBe(205);
-    expect(response3.body).toBe("");
+    expect(response3.statusCode).toBe(200);
 
     const responseFinal = await request(app)
                   .get('/todos/allTodos')
@@ -457,13 +456,177 @@ describe("#8 PUT /todos/edit",()=>{
     expect(responseFinal.body[1].todo_parent_id).toBe(editedTodo.todo_parent_id);
     expect(responseFinal.body[1].completed).toBe(editedTodo.completed);
   });
-  test.todo("#8.2 Receives {id,name,completed} and return 201");
-  test.todo("#8.3 Receives {id,name} and return 201");
-  test.todo("#8.3 Receives {strangeId,name} and return 409");
-  test.todo("#8.4 Receives {id} and return 400");
-  test.todo("#8.5 Receives {name} and return 400");
-  test.todo("#8.6 Receives {} and return 400");
-  test.todo("#8.7 Server is down returning 500");
+  test("#8.2 Receives {id,name,completed} and return 200", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Pao para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com pao"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      id:response1.body.id, 
+      name:"Essa tarefa foi editada por completo ~ ama pao",
+      completed:true
+    };
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte2: ",response2.body);
+    expect(response2.statusCode).toBe(200);
+
+  });
+  test("#8.3 Receives {id,name} and return 200", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Chocolate para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com chocolate"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      id:response1.body.id, 
+      name:"Essa tarefa foi editada ~ ama chocolate",
+    };
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(200);
+
+  });
+  test("#8.3 Receives {strangeId,name} and return 409", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Chocolate para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com cogumelos"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      id:902, 
+      name:"Essa tarefa foi editada ~ ama cogumelos",
+    };
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(409);
+  });
+  test("#8.4 Receives {id} and return 400", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Chocolate para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com cogumelos"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      id:response1.body.id
+    };
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(400);
+  });
+  test("#8.5 Receives {name} and return 400", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Bolo para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com Bolo"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      name: "Picar as abobrinhas"
+    };
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(400);
+  });
+  test("#8.6 Receives {} and return 400", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer Bolo para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com Bolo"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {};
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(400);
+  });
+  test("#8.7 Server is down returning 500", async ()=>{
+    const newTodo = {
+      email:"teste8@snails.com",
+      name:"Fazer churros para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao com chocolate"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const editedTodo = {
+      id:response1.body.id, 
+      name:"Essa tarefa foi editada ~ ama churros",
+    };
+
+    jest.spyOn(prisma.todos,"update").mockImplementation(()=>{
+      throw new Prisma.PrismaClientInitializationError("Server is Down");
+    });
+
+    const response2 = await request(app)
+                  .put('/todos/edit')
+                  .send(editedTodo)
+                  .set('Content-Type', 'application/json');
+    //console.log("parte3: ",response2.body);
+    expect(response2.statusCode).toBe(500);
+  });
 });
 
 describe("#9 PATCH /todos/complete?",()=>{
