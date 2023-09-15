@@ -92,8 +92,34 @@ const updateEntireTodoFromID = async function(toEdit){
     });
 };
 
+const validateNumberType = function(idTodoObj){
+    if(typeof idTodoObj === 'number'){
+        return idTodoObj;
+    }else{
+
+        throw new BadRequestError("Precisa ser do tipo numerico")
+    }
+};
+
+const toggleTodoFromID = async function(idTodoObj){
+    const idTodo = validateNumberType(idTodoObj);
+    const existingTodo = await prisma.todos.findFirstOrThrow({
+        where:{ id: idTodo },
+        select:{
+            completed:true
+        }
+    });
+    //console.log("existingTodo",existingTodo);
+    return await prisma.todos.update({
+        where:{ id: idTodo },
+        data:{
+            completed: existingTodo.completed?false:true
+        }
+    });
+};
 
 module.exports = {
+    toggleTodoFromID,
     updateEntireTodoFromID,
     deleteTodoFromID,
     findTasksFromTodoId,

@@ -16,11 +16,15 @@ process.env.DATABASE_URL = process.env.DATABASE_URL_TESTE;
 
 
 beforeAll( async ()=>{
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
   await prisma.todos.deleteMany({where:{}});
   await prisma.users.deleteMany({where:{}});
 });
 
 afterAll ( async ()=>{
+  jest.clearAllMocks();
+  jest.restoreAllMocks();
   await prisma.todos.deleteMany({where:{}});
   await prisma.users.deleteMany({where:{}});
 });    
@@ -629,10 +633,94 @@ describe("#8 PUT /todos/edit",()=>{
   });
 });
 
-describe("#9 PATCH /todos/complete?",()=>{
-  test.todo("9.1 /todos/complete?id returning 201");
-  test.todo("9.2 /todos/complete?invalidID returning 409");
-  test.todo("9.3 Server is down returning 500");
+describe("#9 PATCH /todos/complete?id=",()=>{
+  test("9.1 /todos/complete?id returning 200 and checks if it has been toggled", async ()=>{
+    await prisma.users.deleteMany({where:{}});
+    await prisma.todos.deleteMany({where:{}});
+
+    await prisma.users.create({data:{
+      name:"Testenildo9",
+      email:"teste9@snails.com",
+      birth: null
+    }});
+
+    const newTodo = {
+      email:"teste9@snails.com",
+      name:"Fazer Cafe para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const response2 = await request(app)
+                  .patch(`/todos/complete?id=${response1.body.id}`)
+                  .send();
+    expect(response2.statusCode).toBe(200);
+
+
+    const response3 = await request(app)
+                  .get('/todos/allTodos')
+                  .send({skip:0,take:1})
+                  .set('Content-Type', 'application/json');
+    expect(response3.statusCode).toBe(200);
+    expect(response3.body[0].completed).toBe(true);
+
+    const response4 = await request(app)
+    .patch(`/todos/complete?id=${response1.body.id}`)
+    .send();
+    expect(response4.statusCode).toBe(200);
+
+    const response5 = await request(app)
+                  .get('/todos/allTodos')
+                  .send({skip:0,take:1})
+                  .set('Content-Type', 'application/json');
+    expect(response5.statusCode).toBe(200);
+    expect(response5.body[0].completed).toBe(false);
+  });
+  test("9.2 /todos/complete?invalidID returning 409", async ()=>{
+    const newTodo = {
+      email:"teste9@snails.com",
+      name:"Fazer Cafe para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    const response2 = await request(app)
+                  .patch(`/todos/complete?id=909`)
+                  .send();
+    expect(response2.statusCode).toBe(409);
+  });
+  test("9.3 Server is down returning 500", async ()=>{
+    const newTodo = {
+      email:"teste9@snails.com",
+      name:"Fazer Cafe para seu Teste de Integracao",
+      description:"Isso eh uma descricao de Integracao"
+    }
+    const response1 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo)
+                  .set('Content-Type', 'application/json');
+    expect(response1.statusCode).toBe(201);
+    expect(response1.body.id).not.toEqual(undefined);
+
+    jest.spyOn(prisma.todos,"findFirstOrThrow").mockImplementation(()=>{
+      throw new Prisma.PrismaClientInitializationError("Server is down");
+    });
+
+    const response2 = await request(app)
+                  .patch(`/todos/complete?id=${response1.body.id}`)
+                  .send();
+    expect(response2.statusCode).toBe(500);
+  });
 });
 
 afterAll(async () => {

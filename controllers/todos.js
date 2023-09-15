@@ -89,3 +89,13 @@ exports.updateEntireTodoFromID = async function(req,res){
         res.status(ErrorHandler(err)).send(err);
     }
 }
+
+exports.toggleTodoFromID = async function(req,res){
+    try{
+        const idToToggle = req.query.id;
+        const response = await todo_services.toggleTodoFromID(+idToToggle);
+        res.status(200).send(response);
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
+};
