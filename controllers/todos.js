@@ -3,10 +3,8 @@
 const todo_services = require('./../services/todos');
 const users_services = require('./../services/users');
 const {ErrorHandler, BadRequestError} = require('./../services/errors');
-const prismaSingleton = require('./../services/prisma');
-const prisma = prismaSingleton();
+const pgObject = require('../services/pg');
 
-// Nao eh necessario propagar o throw no javascript
 const validateEmptyTodoDTO = function(todo){
     if((typeof todo.email === 'string')&&(typeof todo.name === 'string')){
         return todo;
@@ -16,40 +14,40 @@ const validateEmptyTodoDTO = function(todo){
 }
 
 exports.createEmptyTodo = async function(req,res){
-    try{
-        const newTodo = validateEmptyTodoDTO(req.body);
-        const userRequested = await users_services.getUserByEmail(newTodo.email);
-        const todo = {
-            user_id: userRequested.id,
-            name: newTodo.name,
-            todo_parent_id: newTodo.todo_parent_id || null,
-            description: newTodo.description || null
-        };
-        const todoCreated = await todo_services.createEmptyTodo(todo);
-        res.status(201).send(todoCreated);
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);   
-    }
+    // try{
+    //     const newTodo = validateEmptyTodoDTO(req.body);
+    //     const userRequested = await users_services.getUserByEmail(newTodo.email);
+    //     const todo = {
+    //         user_id: userRequested.id,
+    //         name: newTodo.name,
+    //         todo_parent_id: newTodo.todo_parent_id || null,
+    //         description: newTodo.description || null
+    //     };
+    //     const todoCreated = await todo_services.createEmptyTodo(todo);
+    //     res.status(201).send(todoCreated);
+    // }catch(e){
+    //     res.status(ErrorHandler(e)).send(e);   
+    // }
 }; 
 
 exports.findAllTodos = async function(req,res){
-    try{
-        const paginationSettings = req.body;
-        const todos = await todo_services.findAllTodos(paginationSettings);    
-        res.status(200).send(todos);    
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);
-    }
+    // try{
+    //     const paginationSettings = req.body;
+    //     const todos = await todo_services.findAllTodos(paginationSettings);    
+    //     res.status(200).send(todos);    
+    // }catch(e){
+    //     res.status(ErrorHandler(e)).send(e);
+    // }
 };
 
 exports.findTasksFromTodoId = async function(req,res){
-    try{
-        const searchData = req.body;
-        const todos = await todo_services.findTasksFromTodoId(searchData);
-        res.status(200).send(todos);
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);
-    }
+    // try{
+    //     const searchData = req.body;
+    //     const todos = await todo_services.findTasksFromTodoId(searchData);
+    //     res.status(200).send(todos);
+    // }catch(e){
+    //     res.status(ErrorHandler(e)).send(e);
+    // }
 }
 
 function validateDeleteTodoFromID(id){
@@ -61,13 +59,13 @@ function validateDeleteTodoFromID(id){
 };
 
 exports.deleteTodoFromID = async function(req,res){
-    try{
-        const id = validateDeleteTodoFromID(+req.query.id);
-        const response = await todo_services.deleteTodoFromID(id);
-        res.status(202).send(response);
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);
-    }
+    // try{
+    //     const id = validateDeleteTodoFromID(+req.query.id);
+    //     const response = await todo_services.deleteTodoFromID(id);
+    //     res.status(202).send(response);
+    // }catch(e){
+    //     res.status(ErrorHandler(e)).send(e);
+    // }
 };
 
 const validatEdit = function(body){
@@ -79,23 +77,23 @@ const validatEdit = function(body){
 };
 
 exports.updateEntireTodoFromID = async function(req,res){
-    try{
-        const toEdit = validatEdit(req.body);
-        const response = await todo_services.updateEntireTodoFromID(toEdit);
-        res.status(200).send(response);
-        // Como o status 205 proibe payload, ele vai enviar um ""
-        // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
-    }catch(err){
-        res.status(ErrorHandler(err)).send(err);
-    }
+    // try{
+    //     const toEdit = validatEdit(req.body);
+    //     const response = await todo_services.updateEntireTodoFromID(toEdit);
+    //     res.status(200).send(response);
+    //     // Como o status 205 proibe payload, ele vai enviar um ""
+    //     // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
+    // }catch(err){
+    //     res.status(ErrorHandler(err)).send(err);
+    // }
 }
 
 exports.toggleTodoFromID = async function(req,res){
-    try{
-        const idToToggle = req.query.id;
-        const response = await todo_services.toggleTodoFromID(+idToToggle);
-        res.status(200).send(response);
-    }catch(e){
-        res.status(ErrorHandler(e)).send(e);
-    }
+    // try{
+    //     const idToToggle = req.query.id;
+    //     const response = await todo_services.toggleTodoFromID(+idToToggle);
+    //     res.status(200).send(response);
+    // }catch(e){
+    //     res.status(ErrorHandler(e)).send(e);
+    // }
 };

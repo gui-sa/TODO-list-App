@@ -27,6 +27,15 @@ System Requirements::
 [x] Import: the HTTP body on requests and response must be JSONs.
 [x] Test it using command cURL or Postman!
 
+
+New Task:
+
+[-] Migrate from PRISMA to SQL only.
+    [x] Create new 'production' database
+    [x] Create new test database
+    [-] Adapt service layer to use SQL only
+    [-] Adapt test to use the object SQL only
+
 Legenda:
     [] --> Task
         [-] --> Doing...
@@ -34,3 +43,4 @@ Legenda:
     ! --> Observacao
     = --> Resolvido pela mesma implementacao
 
+Não adianta mover as 3 camadas se voce nao separar muito bem as implementações.
