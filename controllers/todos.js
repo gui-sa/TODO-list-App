@@ -1,7 +1,6 @@
 'use strict'
 
 const todo_services = require('./../services/todos');
-const users_services = require('./../services/users');
 const {ErrorHandler, BadRequestError} = require('./../services/errors');
 const pgObject = require('../services/pg');
 
@@ -14,20 +13,20 @@ const validateEmptyTodoDTO = function(todo){
 }
 
 exports.createEmptyTodo = async function(req,res){
-    // try{
-    //     const newTodo = validateEmptyTodoDTO(req.body);
-    //     const userRequested = await users_services.getUserByEmail(newTodo.email);
-    //     const todo = {
-    //         user_id: userRequested.id,
-    //         name: newTodo.name,
-    //         todo_parent_id: newTodo.todo_parent_id || null,
-    //         description: newTodo.description || null
-    //     };
-    //     const todoCreated = await todo_services.createEmptyTodo(todo);
-    //     res.status(201).send(todoCreated);
-    // }catch(e){
-    //     res.status(ErrorHandler(e)).send(e);   
-    // }
+    try{
+        const newTodo = validateEmptyTodoDTO(req.body);
+        const todo = {
+            user_email: newTodo.email,
+            name: newTodo.name,
+            todo_parent_id: newTodo.todo_parent_id,
+            description: newTodo.description,
+            completed : newTodo.completed 
+        };
+        const todoCreated = await todo_services.createEmptyTodo(todo);
+        res.status(201).send(todoCreated);
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);   
+    }
 }; 
 
 exports.findAllTodos = async function(req,res){

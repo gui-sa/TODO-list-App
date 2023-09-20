@@ -2,13 +2,14 @@
 
 const app = require('./../index');
 const request = require('supertest');
-const todos_controller = require('./../controllers/todos');
 const pgObject = require('./../services/pg');
-
+const users_service = require('./../services/users');
+const todos_service = require('./../services/todos');
 
 // Em produção voce possui duas diferenças primordiais: 
 // 1 - Voce naturalmente não enxerga ele pois ele estara na VPC
 // 2 - Se voce quiser testar, de qualquer maneira terá que subir um DB local
+
 const cleanDatabase = async function(){
     const pgClient = new pgObject();
     await pgClient.connect();
@@ -57,7 +58,7 @@ describe("#2 Tests route: GET /asdsa", () => {
 });
 
 
-describe.only("#3 Tests route: POST /users/newuser", ()=>{
+describe("#3 Tests route: POST /users/newuser", ()=>{
   test("#3.1 Should return 201", async ()=>{
     const newUser = {
       name: "Gobinha bacana",
@@ -93,100 +94,57 @@ describe.only("#3 Tests route: POST /users/newuser", ()=>{
                           .post('/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
-    console.log(response.body);
+    //console.log(response.body);
 
     expect(response.statusCode).toBe(201);
   });
-  // test("#3.4 Should return 400", async ()=>{
-  //   const newUser = {
-  //     email: "gobinha.bacana2@snail.com"
-  //   };
-  //   const response = await request(app)
-  //                         .post('/users/newuser')
-  //                         .send(newUser)
-  //                         .set('Content-Type', 'application/json');
-  //   expect(response.statusCode).toBe(400);
-  // });
-  // test("#3.5 Server is down - returning 500", async ()=>{
-  //   const newUser = {
-  //     name: "Gobinha bacana3",
-  //     email: "gobinha.bacana3@snail.com",
-  //     birth: "2023-12-10"
-  //   };
-  //   jest.spyOn(prisma.users,"create").mockImplementation(()=>{
-  //     throw new Prisma.PrismaClientInitializationError;
-  //   })
-  //   const response = await request(app)
-  //                         .post('/users/newuser')
-  //                         .send(newUser)
-  //                         .set('Content-Type', 'application/json');
-  //   expect(response.statusCode).toBe(500);
-  // });
-});
-
-/*
-// /todos/allTodos
-describe("#4 GET /todos/allTodos",()=>{
-  test("#4.1 GET [{name,description,todo_parent_id},...] also returning 200", async ()=>{
-    cleanDatabase();
-    const userThere = await prisma.users.create({data:{
-      name:"TestenildoIntegration",
-      email:"testeIntegration@snails.com",
-      birth: null
-    }});
-    const req = {body:{
-      email:"testeIntegration@snails.com",
-      name:"Fazer Cafe para seu Teste de Integracao",
-      description:"Isso eh uma descricao do teste de Integracao"
-    }};
-    const res = {};
-    res.status = jest.fn().mockReturnValue(res);
-    res.send = jest.fn().mockReturnValue(res);
-    await todos_controller.createEmptyTodo(req,res);
-    expect(res.status).toBeCalledWith(201);
-    const userThere2 = await prisma.users.create({data:{
-      name:"TestenildoIntegration2",
-      email:"testeIntegration2@snails.com",
-      birth: null
-    }});
-    const req2 = {body:{
-      email:"testeIntegration2@snails.com",
-      name:"Fazer Cafe para seu Teste de Integracao2",
-      description:"Isso eh uma descricao do teste de Integracao2"
-    }};
-    const res2 = {};
-    res2.status = jest.fn().mockReturnValue(res2);
-    res2.send = jest.fn().mockReturnValue(res2);
-    await todos_controller.createEmptyTodo(req2,res2);
-    expect(res2.status).toBeCalledWith(201);
-
+  test("#3.4 Should return 400", async ()=>{
+    const newUser = {
+      email: "gobinha.bacana2@snail.com"
+    };
     const response = await request(app)
-                    .get('/todos/allTodos')
-                    .send({skip:0,take:10})
-                    .set('Content-Type', 'application/json');
-
-    expect(response.statusCode).toBe(200);
-    expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
-    expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
+                          .post('/users/newuser')
+                          .send(newUser)
+                          .set('Content-Type', 'application/json');
+    expect(response.statusCode).toBe(400);
   });
-  test("#4.2 GET [] also returning 200 - no data in the db", async ()=>{
-    jest.restoreAllMocks();
-    cleanDatabase();
+  test("#3.5 Server is down - returning 500", async ()=>{
+    const newUser = {
+      name: "Gobinha bacana3",
+      email: "gobinha.bacana3@snail.com",
+      birth: "2023-12-10"
+    };
+
+    jest.spyOn(users_service,"createEmptyUser").mockImplementation(()=>{
+      const pgError = new Error("Server is Down");
+      pgError.code = "ECONNREFUSED";
+      throw pgError;
+    })
     const response = await request(app)
-                    .get('/todos/alltodos');
-    expect(response.status).toBe(200);
-    expect(response.body).toEqual([]);
+                          .post('/users/newuser')
+                          .send(newUser)
+                          .set('Content-Type', 'application/json');
+    expect(response.statusCode).toBe(500);
   });
 });
 
 // /todos/newtodo
 describe("#5 Tests route: POST /todos/newtodo",()=>{
   test("#5.1 Send {email,name,description} receives http status 201", async ()=>{
-    const userThere = await prisma.users.create({data:{
+    const userThere = {
         name:"Testenildo5",
         email:"teste5@snails.com",
         birth: null
-    }});
+    };
+
+    const createdUser = await request(app)
+                    .post('/users/newuser')
+                    .send(userThere)
+                    .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
+
     const newTodo = {
         email:"teste5@snails.com",
         name:"Fazer Cafe para seu Teste de Integracao",
@@ -201,22 +159,32 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
   });
 
   test("#5.2 Send {email,name, todo_parent_id, description} receives http status 201", async ()=>{
-    const anyExistingTodo = await request(app)
-                  .get('/todos/alltodos');
-    expect(anyExistingTodo.statusCode).toBe(200);
 
     const newTodo = {
       email:"teste5@snails.com",
-      name:"Subtask - Fazer Cafe para seu Teste de Integracao ",
-      todo_parent_id: anyExistingTodo.body[0].id,
-      description:"Isso eh uma descricao de Integracao"   
+      name:"Task2",
+      description:"Isso eh uma descricao de Integracao",
+      completed:true  
     };
 
-    const response = await request(app)
+    const response1 = await request(app)
                   .post('/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
-    expect(response.statusCode).toBe(201);
+    expect(response1.statusCode).toBe(201);
+
+    const newTodo2 = {
+      email:"teste5@snails.com",
+      name:"Subtask - Fazer Cafe para seu Teste de Integracao ",
+      todo_parent_id: response1.body.id,
+      description:"Isso eh uma descricao de Integracao"   
+    };
+
+    const response2 = await request(app)
+                  .post('/todos/newtodo')
+                  .send(newTodo2)
+                  .set('Content-Type', 'application/json');
+    expect(response2.statusCode).toBe(201);
   });
 
 
@@ -260,8 +228,10 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
   });
 
   test("#5.6 Send {email,name,description} with server down receives http status 500", async ()=>{
-    jest.spyOn(prisma.users,"findFirstOrThrow").mockImplementation(()=>{
-      throw new Prisma.PrismaClientInitializationError("Server is Down");
+    jest.spyOn(todos_service,"createEmptyTodo").mockImplementation(()=>{
+      const serverIsDown =  new Error("Server is Down");
+      serverIsDown.code = "ECONNREFUSED";
+      throw serverIsDown;
     });
 
     const newTodo = {
@@ -277,6 +247,64 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     expect(response.statusCode).toBe(500);
   });
 });
+
+// // /todos/allTodos
+// describe("#4 GET /todos/allTodos",()=>{
+//   test("#4.1 GET [{name,description,todo_parent_id},...] also returning 200", async ()=>{
+//     await cleanDatabase();
+//     const userThere = {
+//       name:"TestenildoIntegration",
+//       email:"testeIntegration@snails.com",
+//       birth: null
+//     };
+//     const createdUser = await request(app)
+//                     .post('/users/newuser')
+//                     .send(userThere)
+//                     .set('Content-Type', 'application/json');
+//     //console.log(response.body);
+//     expect(createdUser.statusCode).toBe(201);
+//     expect(createdUser.body).not.toBe(undefined);
+
+//     const todo1 = {
+//       email:"testeIntegration@snails.com",
+//       name:"Fazer Cafe para seu Teste de Integracao",
+//       description:"Isso eh uma descricao do teste de Integracao"
+//     };
+//     await todos_controller.createEmptyTodo(req,res);
+//     expect(res.status).toBeCalledWith(201);
+
+//     const todo2 = {
+//       email:"testeIntegration@snails.com",
+//       name:"Fazer Cafe para seu Teste de Integracao",
+//       description:"Isso eh uma descricao do teste de Integracao"
+//     };
+
+//     const res2 = {};
+//     res2.status = jest.fn().mockReturnValue(res2);
+//     res2.send = jest.fn().mockReturnValue(res2);
+//     await todos_controller.createEmptyTodo(req2,res2);
+//     expect(res2.status).toBeCalledWith(201);
+
+//     const response = await request(app)
+//                     .get('/todos/allTodos')
+//                     .send({skip:0,take:10})
+//                     .set('Content-Type', 'application/json');
+
+//     expect(response.statusCode).toBe(200);
+//     expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
+//     expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
+//   });
+//   test("#4.2 GET [] also returning 200 - no data in the db", async ()=>{
+//     jest.restoreAllMocks();
+//     cleanDatabase();
+//     const response = await request(app)
+//                     .get('/todos/alltodos');
+//     expect(response.status).toBe(200);
+//     expect(response.body).toEqual([]);
+//   });
+// });
+/*
+
 
 // /todos/fromtodo
 describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/fromtodo",()=>{

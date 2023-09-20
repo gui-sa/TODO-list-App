@@ -1,26 +1,40 @@
 'use strict'
 
-const {BadRequestError, DBProblemError} = require('./errors');
+const users_services = require('./users');
+const {BadRequestError} = require('./errors');
 const pgObject = require('./pg');
 
 const validateTodo = function(todo){
-    if ((typeof todo.user_id === 'number')&&(typeof todo.name === 'string')){
+    if ((typeof todo.user_email === 'string')&&(typeof todo.name === 'string')){
         return todo;
     }else{
         throw new BadRequestError("Minimum user properties is missing");
     }
 }
 
-const createEmptyTodo = async function(newTodo){
-    // const todo = validateTodo(newTodo);
-    // const response = await prisma.todos.create({data:{
-    //     user_id: todo.user_id,
-    //     todo_parent_id : todo.todo_parent_id || null,
-    //     name : todo.name,
-    //     description : todo.description || null,
-    //     completed : todo.completed || false
-    //     }});
-    // return response;
+const createEmptyTodo = async function(newTodoReq){
+    const todo = validateTodo(newTodoReq);
+
+    const userRequested = await users_services.getUserByEmail(todo.user_email);
+    
+    const newTodo = {
+        user_id: `${userRequested.id}`,
+        todo_parent_id :todo.todo_parent_id?`${todo.todo_parent_id}`:"NULL",
+        name :`'${todo.name}'` ,
+        description :todo.description?`'${todo.description}'`: "NULL",
+        completed : todo.completed?`${todo.completed}`:"FALSE"
+    };
+
+    const query = `;INSERT INTO todos(name, description, todo_parent_id, completed, user_id) 
+    values (${newTodo.name},${newTodo.description},${newTodo.todo_parent_id},${newTodo.completed},${newTodo.user_id})
+    returning *;`
+
+    const pgClient = new pgObject();
+    await pgClient.connect();
+    const createdTodo = await pgClient.query(query);
+    await pgClient.end();
+
+    return createdTodo.rows[0];
 };
 
 const findAllTodos = async function(paginationSettings){
