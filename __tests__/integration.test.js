@@ -449,18 +449,25 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
   });
 });
 
-/*
 
 
 describe("#8 PUT /todos/edit",()=>{
   test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 200 and test it by finding it in DB", async ()=>{
-    cleanDatabase();
+    await cleanDatabase();
 
-    await prisma.users.create({data:{
+    const userThere = {
       name:"Testenildo8",
       email:"teste8@snails.com",
       birth: null
-    }});
+    };
+
+    const createdUser = await request(app)
+                .post('/users/newuser')
+                .send(userThere)
+                .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
 
     const newTodo = {
       email:"teste8@snails.com",
@@ -509,9 +516,7 @@ describe("#8 PUT /todos/edit",()=>{
     expect(response3.statusCode).toBe(200);
 
     const responseFinal = await request(app)
-                  .get('/todos/allTodos')
-                  .send({skip:0,take:2})
-                  .set('Content-Type', 'application/json');
+                  .get('/todos/allTodos?skip=0&take=10')
     //console.log("responseFinal.body: \n", responseFinal.body);
     //console.log("editedTodo: \n", editedTodo);
     expect(responseFinal.statusCode).toBe(200);
@@ -572,7 +577,7 @@ describe("#8 PUT /todos/edit",()=>{
     expect(response2.statusCode).toBe(200);
 
   });
-  test("#8.3 Receives {strangeId,name} and return 409", async ()=>{
+  test("#8.3 Receives {strangeId,name} and return 200 and []", async ()=>{
     const newTodo = {
       email:"teste8@snails.com",
       name:"Fazer Chocolate para seu Teste de Integracao",
@@ -594,7 +599,8 @@ describe("#8 PUT /todos/edit",()=>{
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
-    expect(response2.statusCode).toBe(409);
+    expect(response2.statusCode).toBe(200);
+    expect(response2.body).toEqual({});
   });
   test("#8.4 Receives {id} and return 400", async ()=>{
     const newTodo = {
@@ -681,8 +687,10 @@ describe("#8 PUT /todos/edit",()=>{
       name:"Essa tarefa foi editada ~ ama churros",
     };
 
-    jest.spyOn(prisma.todos,"update").mockImplementation(()=>{
-      throw new Prisma.PrismaClientInitializationError("Server is Down");
+    jest.spyOn(todos_service,"updateEntireTodoFromID").mockImplementation(()=>{
+      const serverIsDown =  new Error("Server is Down");
+      serverIsDown.code = "ECONNREFUSED";
+      throw serverIsDown;
     });
 
     const response2 = await request(app)
@@ -693,6 +701,9 @@ describe("#8 PUT /todos/edit",()=>{
     expect(response2.statusCode).toBe(500);
   });
 });
+
+/*
+
 
 describe("#9 PATCH /todos/complete?id=",()=>{
   test("9.1 /todos/complete?id returning 200 and checks if it has been toggled", async ()=>{

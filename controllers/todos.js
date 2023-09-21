@@ -79,15 +79,15 @@ const validatEdit = function(body){
 };
 
 exports.updateEntireTodoFromID = async function(req,res){
-    // try{
-    //     const toEdit = validatEdit(req.body);
-    //     const response = await todo_services.updateEntireTodoFromID(toEdit);
-    //     res.status(200).send(response);
-    //     // Como o status 205 proibe payload, ele vai enviar um ""
-    //     // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
-    // }catch(err){
-    //     res.status(ErrorHandler(err)).send(err);
-    // }
+    try{
+        const toEdit = validatEdit(req.body);
+        const response = await todo_services.updateEntireTodoFromID(toEdit);
+        res.status(200).send(response);
+        // Como o status 205 proibe payload, ele vai enviar um ""
+        // Se eu so dou um "send()" ele envia um objeto vazio bugadasso {} e quebra tudo 0-0
+    }catch(err){
+        res.status(ErrorHandler(err)).send(err);
+    }
 }
 
 exports.toggleTodoFromID = async function(req,res){

@@ -95,15 +95,25 @@ const deleteTodoFromID = async function(idToRemove){
 };
 
 const updateEntireTodoFromID = async function(toEdit){
-    // return await prisma.todos.update({
-    //     where:{ id: toEdit.id },
-    //     data:{
-    //         name: toEdit.name,
-    //         todo_parent_id: toEdit.todo_parent_id,
-    //         description: toEdit.description,
-    //         completed: toEdit.completed
-    //     },
-    // });
+
+
+    const id = toEdit.id?toEdit.id:"Error";
+    const newName = toEdit.name?`'${toEdit.name}'`:"Error";
+    const newDescription = toEdit.description?`,description='${toEdit.description}'`:",description= NULL";
+    const newTodo_parent_id = toEdit.todo_parent_id?`,todo_parent_id= ${todo_parent_id}`:",todo_parent_id= NULL";
+    const completedStatus = toEdit.completed?`,completed = ${toEdit.completed?"TRUE":"FALSE"}`:"";
+
+    const query = `;UPDATE todos 
+    SET name=${newName} ${newDescription} ${completedStatus} ${newTodo_parent_id}
+     WHERE todos.id=${id};`;
+    console.log(query);
+
+    const pgClient = new pgObject();
+    await pgClient.connect();
+    const editedTodo = await pgClient.query(query);
+    await pgClient.end();
+
+    return editedTodo.rows[0];
 };
 
 const validateNumberType = function(idTodoObj){
