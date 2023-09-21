@@ -740,7 +740,6 @@ describe("#9 PATCH /todos/complete?id=",()=>{
                   .send();
     expect(response2.statusCode).toBe(200);
 
-    console.log("BOA");
 
     const response3 = await request(app)
                   .get('/todos/allTodos?skip=0&take=1')

@@ -130,7 +130,7 @@ const toggleTodoFromID = async function(idTodoObj){
 
     const query1 = `;SELECT * FROM todos
      WHERE todos.id=${idTodoObj};`;
-    console.log("query1",query1);
+    //console.log("query1",query1);
 
     const pgClient = new pgObject();
     await pgClient.connect();
@@ -143,7 +143,7 @@ const toggleTodoFromID = async function(idTodoObj){
     SET completed=${toggle?"TRUE":"FALSE"}
      WHERE todos.id=${idTodoObj} RETURNING *;`;
 
-    console.log("query2",query2);
+    //console.log("query2",query2);
 
     const pgClient2 = new pgObject();
     await pgClient2.connect();
