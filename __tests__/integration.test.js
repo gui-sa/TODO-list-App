@@ -311,18 +311,24 @@ describe("#4 GET /todos/allTodos",()=>{
 });
 
 
-/*
-
 // /todos/fromtodo
 describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/fromtodo",()=>{
   test("#6.1 Deletes all data, creates a user, creates a root todo, creates a task to that todo. Enters {id} and returns status 200", async ()=>{
-    cleanDatabase();
+    await cleanDatabase();
 
-    const userThere = await prisma.users.create({data:{
+    const userThere ={
       name:"Testenildo6",
       email:"teste6@snails.com",
       birth: null
-    }});
+    };
+
+    const createdUser = await request(app)
+                .post('/users/newuser')
+                .send(userThere)
+                .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
 
     const newTodo1 = {
         email:"teste6@snails.com",
@@ -350,37 +356,43 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
     expect(response2.body.todo_parent_id).toBe(response.body.id);
 
     const responseFinal = await request(app)
-                  .get('/todos/fromtodo')
-                  .send({skip:0,take:10, id:response.body.id})
+                  .post('/todos/fromtodo?skip=0&take=10')
+                  .send({id:response.body.id})
                   .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
   });
   test("#6.2 Enters {} and returns status 400 and a empty []", async ()=>{
     const response = await request(app)
-                            .get('/todos/fromtodo')
+                            .post('/todos/fromtodo?skip0&take=10')
                             .send({})
                             .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
   });
-  test("#6.3 Enters {id:notKnown} and returns status 200 and a []", async ()=>{
+  test("#6.3 Enters {id:notKnown} and returns status 200 and [] ", async ()=>{
     const responseFinal = await request(app)
-                            .get('/todos/fromtodo')
-                            .send({skip:0,take:10, id:Math.floor(Math.random()*1000)})
+                            .post('/todos/fromtodo?skip=0&take=10')
+                            .send({id:Math.floor(Math.random()*1000)})
                             .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
     expect(responseFinal.body).toEqual([]);
+
   });
   test("#6.4 Server is down returning 500", async ()=>{
-    jest.spyOn(prisma.todos,"findMany").mockImplementation(()=>{
-      throw new Prisma.PrismaClientInitializationError("Server is Down");
+    jest.spyOn(todos_service,"findTasksFromTodoId").mockImplementation(()=>{
+      const serverIsDown =  new Error("Server is Down");
+      serverIsDown.code = "ECONNREFUSED";
+      throw serverIsDown;
     });
     const responseFinal = await request(app)
-                          .get('/todos/fromtodo')
-                          .send({skip:0,take:10, id:Math.floor(Math.random()*1000)})
+                          .post('/todos/fromtodo?skip=0&take=10')
+                          .send({id:Math.floor(Math.random()*1000)})
                           .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(500);
   });
 });
+
+
+/*
 
 // /todos/delete?id
 describe("#7 DELETE todo /todos/delete?id=<>",()=>{
