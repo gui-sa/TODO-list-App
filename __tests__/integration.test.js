@@ -425,7 +425,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
     expect(response1.statusCode).toBe(201);
     expect(response1.body.id).not.toEqual(undefined);
 
-    console.log(response1.body.id);
+    //console.log(response1.body.id);
     const response = await request(app)
                         .delete(`/todos/delete?id=${response1.body.id}`);
     expect(response.statusCode).toBe(202);
@@ -702,18 +702,26 @@ describe("#8 PUT /todos/edit",()=>{
   });
 });
 
-/*
 
 
 describe("#9 PATCH /todos/complete?id=",()=>{
   test("9.1 /todos/complete?id returning 200 and checks if it has been toggled", async ()=>{
-    cleanDatabase();
+    await cleanDatabase();
 
-    await prisma.users.create({data:{
+    const userThere = {
       name:"Testenildo9",
       email:"teste9@snails.com",
       birth: null
-    }});
+    };
+
+    const createdUser = await request(app)
+                .post('/users/newuser')
+                .send(userThere)
+                .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
+
 
     const newTodo = {
       email:"teste9@snails.com",
@@ -732,23 +740,20 @@ describe("#9 PATCH /todos/complete?id=",()=>{
                   .send();
     expect(response2.statusCode).toBe(200);
 
+    console.log("BOA");
 
     const response3 = await request(app)
-                  .get('/todos/allTodos')
-                  .send({skip:0,take:1})
-                  .set('Content-Type', 'application/json');
+                  .get('/todos/allTodos?skip=0&take=1')
     expect(response3.statusCode).toBe(200);
     expect(response3.body[0].completed).toBe(true);
 
     const response4 = await request(app)
-    .patch(`/todos/complete?id=${response1.body.id}`)
-    .send();
+            .patch(`/todos/complete?id=${response1.body.id}`)
+            .send();
     expect(response4.statusCode).toBe(200);
 
     const response5 = await request(app)
-                  .get('/todos/allTodos')
-                  .send({skip:0,take:1})
-                  .set('Content-Type', 'application/json');
+                  .get('/todos/allTodos?skip=0&take=1')
     expect(response5.statusCode).toBe(200);
     expect(response5.body[0].completed).toBe(false);
   });
@@ -783,8 +788,10 @@ describe("#9 PATCH /todos/complete?id=",()=>{
     expect(response1.statusCode).toBe(201);
     expect(response1.body.id).not.toEqual(undefined);
 
-    jest.spyOn(prisma.todos,"findFirstOrThrow").mockImplementation(()=>{
-      throw new Prisma.PrismaClientInitializationError("Server is down");
+    jest.spyOn(todos_service,"toggleTodoFromID").mockImplementation(()=>{
+      const serverIsDown =  new Error("Server is Down");
+      serverIsDown.code = "ECONNREFUSED";
+      throw serverIsDown;
     });
 
     const response2 = await request(app)
@@ -797,4 +804,3 @@ describe("#9 PATCH /todos/complete?id=",()=>{
 afterAll(async () => {
   await new Promise((resolve) => setTimeout(() => resolve(), 500)); // avoid jest open handle error
 });
-*/

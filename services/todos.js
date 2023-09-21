@@ -106,7 +106,7 @@ const updateEntireTodoFromID = async function(toEdit){
     const query = `;UPDATE todos 
     SET name=${newName} ${newDescription} ${completedStatus} ${newTodo_parent_id}
      WHERE todos.id=${id};`;
-    console.log(query);
+    //console.log(query);
 
     const pgClient = new pgObject();
     await pgClient.connect();
@@ -126,20 +126,33 @@ const validateNumberType = function(idTodoObj){
 };
 
 const toggleTodoFromID = async function(idTodoObj){
-    // const idTodo = validateNumberType(idTodoObj);
-    // const existingTodo = await prisma.todos.findFirstOrThrow({
-    //     where:{ id: idTodo },
-    //     select:{
-    //         completed:true
-    //     }
-    // });
-    // //console.log("existingTodo",existingTodo);
-    // return await prisma.todos.update({
-    //     where:{ id: idTodo },
-    //     data:{
-    //         completed: existingTodo.completed?false:true
-    //     }
-    // });
+    const idTodo = validateNumberType(idTodoObj);
+
+    const query1 = `;SELECT * FROM todos
+     WHERE todos.id=${idTodoObj};`;
+    console.log("query1",query1);
+
+    const pgClient = new pgObject();
+    await pgClient.connect();
+    const todo = await pgClient.query(query1);
+    await pgClient.end();
+
+    const toggle = todo.rows[0].completed?false:true
+
+    const query2 = `;UPDATE todos 
+    SET completed=${toggle?"TRUE":"FALSE"}
+     WHERE todos.id=${idTodoObj} RETURNING *;`;
+
+    console.log("query2",query2);
+
+    const pgClient2 = new pgObject();
+    await pgClient2.connect();
+    const editedTodo = await pgClient2.query(query2);
+    await pgClient2.end();
+
+
+    //console.log("existingTodo",existingTodo);
+    return editedTodo;
 };
 
 module.exports = {
