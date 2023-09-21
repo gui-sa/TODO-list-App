@@ -248,63 +248,70 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
   });
 });
 
-// // /todos/allTodos
-// describe("#4 GET /todos/allTodos",()=>{
-//   test("#4.1 GET [{name,description,todo_parent_id},...] also returning 200", async ()=>{
-//     await cleanDatabase();
-//     const userThere = {
-//       name:"TestenildoIntegration",
-//       email:"testeIntegration@snails.com",
-//       birth: null
-//     };
-//     const createdUser = await request(app)
-//                     .post('/users/newuser')
-//                     .send(userThere)
-//                     .set('Content-Type', 'application/json');
-//     //console.log(response.body);
-//     expect(createdUser.statusCode).toBe(201);
-//     expect(createdUser.body).not.toBe(undefined);
+// /todos/allTodos?skip=0&take=2
+describe("#4 GET /todos/allTodos",()=>{
+  test("#4.1 GET [{name,description,todo_parent_id},...] also returning 200", async ()=>{
+    await cleanDatabase();
+    const userThere = {
+      name:"TestenildoIntegration",
+      email:"testeIntegration@snails.com",
+      birth: null
+    };
+    const createdUser = await request(app)
+                    .post('/users/newuser')
+                    .send(userThere)
+                    .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
 
-//     const todo1 = {
-//       email:"testeIntegration@snails.com",
-//       name:"Fazer Cafe para seu Teste de Integracao",
-//       description:"Isso eh uma descricao do teste de Integracao"
-//     };
-//     await todos_controller.createEmptyTodo(req,res);
-//     expect(res.status).toBeCalledWith(201);
+    const todo1 = {
+      email:"testeIntegration@snails.com",
+      name:"Fazer Cafe para seu Teste de Integracao",
+      description:"Isso eh uma descricao do teste de Integracao"
+    };
 
-//     const todo2 = {
-//       email:"testeIntegration@snails.com",
-//       name:"Fazer Cafe para seu Teste de Integracao",
-//       description:"Isso eh uma descricao do teste de Integracao"
-//     };
+    const createdTodo1 = await request(app)
+              .post('/todos/newtodo')
+              .send(todo1)
+              .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdTodo1.statusCode).toBe(201);
+    expect(createdTodo1.body).not.toBe(undefined);
+    
 
-//     const res2 = {};
-//     res2.status = jest.fn().mockReturnValue(res2);
-//     res2.send = jest.fn().mockReturnValue(res2);
-//     await todos_controller.createEmptyTodo(req2,res2);
-//     expect(res2.status).toBeCalledWith(201);
+    const todo2 = {
+      email:"testeIntegration@snails.com",
+      name:"Fazer Cafe para seu Teste de Integracao2",
+      description:"Isso eh uma descricao do teste de Integracao2"
+    };
 
-//     const response = await request(app)
-//                     .get('/todos/allTodos')
-//                     .send({skip:0,take:10})
-//                     .set('Content-Type', 'application/json');
+    const createdTodo2 = await request(app)
+              .post('/todos/newtodo')
+              .send(todo2)
+              .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdTodo2.statusCode).toBe(201);
+    expect(createdTodo2.body).not.toBe(undefined);
 
-//     expect(response.statusCode).toBe(200);
-//     expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
-//     expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
-//   });
-//   test("#4.2 GET [] also returning 200 - no data in the db", async ()=>{
-//     jest.restoreAllMocks();
-//     cleanDatabase();
-//     const response = await request(app)
-//                     .get('/todos/alltodos');
-//     expect(response.status).toBe(200);
-//     expect(response.body).toEqual([]);
-//   });
-// });
+    const response = await request(app)
+                    .get('/todos/alltodos?skip=0&take=2');
+    expect(response.statusCode).toBe(200);
+    expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
+    expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
+  });
+  test("#4.2 GET [] also returning 200 - no data in the db", async ()=>{
+    jest.restoreAllMocks();
+    await cleanDatabase();
+    const response = await request(app)
+                    .get('/todos/alltodos?skip=0&take=2');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([]);
+  });
+});
+
+
 /*
-
 
 // /todos/fromtodo
 describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/fromtodo",()=>{

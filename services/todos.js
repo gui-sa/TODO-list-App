@@ -38,20 +38,18 @@ const createEmptyTodo = async function(newTodoReq){
 };
 
 const findAllTodos = async function(paginationSettings){
-    // return await prisma.todos.findMany({
-    //     skip:paginationSettings.skip,
-    //     take:paginationSettings.take ,
-    //     orderBy: {
-    //         id: 'asc'
-    //     },
-    //     select:{
-    //         id:true,
-    //         name:true,
-    //         todo_parent_id:true,
-    //         description:true,
-    //         completed:true
-    //     }
-    // });
+
+    const query = `;SELECT todos.id as id,todos.name as name,
+     todos.description as description, todos.completed as completed,
+      todos.todo_parent_id as todo_parent_id FROM todos
+       ORDER BY id ASC OFFSET ${paginationSettings.skip} LIMIT ${paginationSettings.take};`;
+
+    const pgClient = new pgObject();
+    await pgClient.connect();
+    const allTodos = await pgClient.query(query);
+    await pgClient.end();
+
+    return allTodos.rows;
 }
 
 function validateFindTasksFromTodoId(searchData){

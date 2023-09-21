@@ -30,13 +30,13 @@ exports.createEmptyTodo = async function(req,res){
 }; 
 
 exports.findAllTodos = async function(req,res){
-    // try{
-    //     const paginationSettings = req.body;
-    //     const todos = await todo_services.findAllTodos(paginationSettings);    
-    //     res.status(200).send(todos);    
-    // }catch(e){
-    //     res.status(ErrorHandler(e)).send(e);
-    // }
+    try{
+        const paginationSettings = req.query;
+        const todos = await todo_services.findAllTodos(paginationSettings);    
+        res.status(200).send(todos);    
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
 };
 
 exports.findTasksFromTodoId = async function(req,res){
