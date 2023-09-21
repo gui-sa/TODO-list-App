@@ -392,19 +392,26 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
 });
 
 
-/*
 
 // /todos/delete?id
 describe("#7 DELETE todo /todos/delete?id=<>",()=>{
 
   test("#7.1 Enters /todos/delete?validID returning 202", async ()=>{
-    cleanDatabase();
+    await cleanDatabase();
 
-    const userThere = await prisma.users.create({data:{
+    const userThere = {
       name:"Testenildo7",
       email:"teste7@snails.com",
       birth: null
-    }});
+    };
+
+    const createdUser = await request(app)
+                .post('/users/newuser')
+                .send(userThere)
+                .set('Content-Type', 'application/json');
+    //console.log(response.body);
+    expect(createdUser.statusCode).toBe(201);
+    expect(createdUser.body).not.toBe(undefined);
 
     const newTodo = {
         email:"teste7@snails.com",
@@ -418,26 +425,32 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
     expect(response1.statusCode).toBe(201);
     expect(response1.body.id).not.toEqual(undefined);
 
+    console.log(response1.body.id);
     const response = await request(app)
                         .delete(`/todos/delete?id=${response1.body.id}`);
     expect(response.statusCode).toBe(202);
   });
 
-  test("#7.2 Enters /todos/delete?InvalidID returnin 204", async ()=>{
+  test("#7.2 Enters /todos/delete?InvalidID returnin 400", async ()=>{
     const response = await request(app)
                         .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
-    expect(response.statusCode).toBe(409);
+    expect(response.statusCode).toBe(400);
   });
 
   test("#7.3 Server is down returning 500", async ()=>{
-    jest.spyOn(prisma.todos,"delete").mockImplementation(()=>{
-      throw new Prisma.PrismaClientInitializationError("Server is down");
-    })
+    jest.spyOn(todos_service,"deleteTodoFromID").mockImplementation(()=>{
+      const serverIsDown =  new Error("Server is Down");
+      serverIsDown.code = "ECONNREFUSED";
+      throw serverIsDown;
+    });
     const response = await request(app)
                     .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
     expect(response.statusCode).toBe(500);
   });
 });
+
+/*
+
 
 describe("#8 PUT /todos/edit",()=>{
   test("#8.1 Receives {id,name,description,todo_parent_id,completed}, return 200 and test it by finding it in DB", async ()=>{

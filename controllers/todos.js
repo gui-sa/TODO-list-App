@@ -61,13 +61,13 @@ function validateDeleteTodoFromID(id){
 };
 
 exports.deleteTodoFromID = async function(req,res){
-    // try{
-    //     const id = validateDeleteTodoFromID(+req.query.id);
-    //     const response = await todo_services.deleteTodoFromID(id);
-    //     res.status(202).send(response);
-    // }catch(e){
-    //     res.status(ErrorHandler(e)).send(e);
-    // }
+    try{
+        const id = validateDeleteTodoFromID(+req.query.id);
+        const response = await todo_services.deleteTodoFromID(id);
+        res.status(202).send(response);
+    }catch(e){
+        res.status(ErrorHandler(e)).send(e);
+    }
 };
 
 const validatEdit = function(body){

@@ -66,9 +66,9 @@ const findTasksFromTodoId = async function(searchData){
     const query = `;SELECT todos.id as id,todos.name as name,
      todos.description as description, todos.completed as completed,
       todos.todo_parent_id as todo_parent_id FROM todos
-      WHERE todos.user_id=${verifiedSearchData.id} 
+      WHERE todos.todo_parent_id=${verifiedSearchData.id} 
         ORDER BY id ASC OFFSET ${verifiedSearchData.skip} LIMIT ${verifiedSearchData.take};`;
-    console.log(query);
+    //console.log(query);
     const pgClient = new pgObject();
     await pgClient.connect();
     const allTodos = await pgClient.query(query);
@@ -79,11 +79,19 @@ const findTasksFromTodoId = async function(searchData){
 
 
 const deleteTodoFromID = async function(idToRemove){
-    // return await prisma.todos.delete({
-    //     where:{
-    //         id:idToRemove
-    //     }
-    // });
+    const query = `;DELETE FROM TODOS WHERE todos.id=${idToRemove} RETURNING *;`;
+    //console.log(query);
+
+    const pgClient = new pgObject();
+    await pgClient.connect();
+    const deletedTodo = await pgClient.query(query);
+    await pgClient.end();
+    //console.log(deletedTodo.rows);
+    if (deletedTodo.rows[0] === undefined){
+        throw new BadRequestError("Esse id não existe");
+    }
+
+    return deletedTodo.rows[0];
 };
 
 const updateEntireTodoFromID = async function(toEdit){
