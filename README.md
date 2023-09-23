@@ -1,12 +1,12 @@
 # TODO-list-App
 
-API - Requirement - Node - PostgreSQL - Express - Prisma - Jest
+API - Requirement - Node - PostgreSQL - Express - PG - Jest
 
 Cheque as branchs para mais detalhes do projeto! 
 
 A ideia principal é experimentar ferramentas e analisar pros e contras.
 
-É uma API meio termo entre RPC e REST... Na verdade pratica um pouco das duas.
+É uma API REST.
 
 ## Project 1:
 
