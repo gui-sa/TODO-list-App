@@ -1,18 +1,15 @@
 'use strict'
 
-const express = require('express');
-const router = express.Router();
-const main_controller = require('../controllers/main');
-const todos_router = require('./todos');
-const users_router = require('./users');
+const express = require('express')
+const router = express.Router()
+const mainController = require('../controllers/main')
+const versionRouter = require('./versions')
 
-router.use('/todos',todos_router);
+router.use('/v1', versionRouter)
 
-router.use('/users',users_router);
+router.get('/teste', mainController.testeGet)
 
-router.get('/teste',main_controller.testeGet);
+router.get('*', mainController.defaultGet)
 
-router.get('*',main_controller.defaultGet);
-
-module.exports = router;
-// uma sugestao 
+module.exports = router
+// uma sugestao

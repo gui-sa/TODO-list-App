@@ -1,24 +1,22 @@
 # TODO-list-App
-API - Requirement - Node - PostgreSQL - Express - Prisma - jest - supertest - Jest - supertest - dotenv
 
-## User Requirements:
-- You can have multiple TODO lists
-- A TODO list has a name
-- Each TODO list can have multiple TODO items
-- Each TODO item has a name and a text body
-- You can create, edit and delete TODO items, and lists
-- You can move TODO items from a list to another list
+API - Requirement - Node - PostgreSQL - Express - PG - Jest
 
-## System Requirements:
-- 1 route for creating an empty TODO list (POST)
-- 1 route for returning all TODO lists that exists, and their sizes
-- 1 route for returning all TODO items on a TODO list (GET + pagination)
-- 1 route for editing an existing TODO list
-- 1 route for deleting an existing TODO list
-- 1 route for creating a new TODO item (POST) on an existing TODO list
-- 1 route for updating an existing TODO item (PATCH x PUT?)
-- 1 route for deleting an existing TODO item (DELETE)
-- 1 route for moving a TODO item from a list, to another list
-- Import: the HTTP body on requests and response must be JSONs.
-- Test it using command cURL or Postman!
+Cheque as branchs para mais detalhes do projeto! 
 
+A ideia principal é experimentar ferramentas e analisar pros e contras.
+
+É uma API REST.
+
+## Project 1:
+
+Implemente usando Prisma ORM.
+
+## Project 2:
+
+Agora implemente usando SQL puro.
+
+## MERGE ONE FILE:
+git checkout --theirs main ./README.md
+
+Voce pode usar checkout para recuperar outros arquivos!

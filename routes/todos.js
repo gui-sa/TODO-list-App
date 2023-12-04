@@ -1,14 +1,14 @@
 'use strict'
 
-const express = require('express');
-const router = express.Router();
-const todos_controller = require('./../controllers/todos');
+const express = require('express')
+const router = express.Router()
+const todosController = require('./../controllers/todos')
 
-router.post('/newtodo',todos_controller.createEmptyTodo);
-router.get('/allTodos',todos_controller.findAllTodos);
-router.get('/fromtodo',todos_controller.findTasksFromTodoId);
-router.delete('/delete',todos_controller.deleteTodoFromID);
-router.put('/edit',todos_controller.updateEntireTodoFromID);
-router.patch('/complete',todos_controller.toggleTodoFromID);
+router.post('/newtodo', todosController.createEmptyTodo)
+router.get('/alltodos', todosController.findAllTodos)
+router.post('/fromtodo', todosController.findTasksFromTodoId)
+router.delete('/delete', todosController.deleteTodoFromID)
+router.put('/edit', todosController.updateEntireTodoFromID)
+router.patch('/complete', todosController.toggleTodoFromID)
 
-module.exports = router;
+module.exports = router
