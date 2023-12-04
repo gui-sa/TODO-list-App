@@ -42,7 +42,7 @@ const findAllTodos = async function(paginationSettings){
     const query = `;SELECT todos.id as id,todos.name as name,
      todos.description as description, todos.completed as completed,
       todos.todo_parent_id as todo_parent_id FROM todos
-       ORDER BY id ASC OFFSET ${paginationSettings.skip} LIMIT ${paginationSettings.take};`;
+       ORDER BY id ASC OFFSET ${paginationSettings.offset} LIMIT ${paginationSettings.limit};`;
 
     const pgClient = new pgObject();
     await pgClient.connect();

@@ -43,8 +43,8 @@ exports.findTasksFromTodoId = async function(req,res){
     try{
         const searchData = {};
         searchData.id = req.body.id?+req.body.id:"Error";
-        searchData.skip = req.query.skip?+req.query.skip:"Error";
-        searchData.take = req.query.take?+req.query.take:"Error";
+        searchData.skip = req.query.offset?+req.query.offset:"Error";
+        searchData.take = req.query.limit?+req.query.limit:"Error";
         const todos = await todo_services.findTasksFromTodoId(searchData);
         res.status(200).send(todos);
     }catch(e){

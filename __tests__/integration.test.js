@@ -248,8 +248,8 @@ describe("#5 Tests route: POST /v1/todos/newtodo",()=>{
   });
 });
 
-// /todos/allTodos?skip=0&take=2
-describe("#4 GET /todos/allTodos",()=>{
+// /todos/alltodos?offset=0&limit=2
+describe("#4 GET /v1/todos/alltodos",()=>{
   test("#4.1 GET [{name,description,todo_parent_id},...] also returning 200", async ()=>{
     await cleanDatabase();
     const userThere = {
@@ -295,7 +295,7 @@ describe("#4 GET /todos/allTodos",()=>{
     expect(createdTodo2.body).not.toBe(undefined);
 
     const response = await request(app)
-                    .get('/v1/todos/alltodos?skip=0&take=2');
+                    .get('/v1/todos/alltodos?offset=0&limit=2');
     expect(response.statusCode).toBe(200);
     expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
     expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
@@ -304,7 +304,7 @@ describe("#4 GET /todos/allTodos",()=>{
     jest.restoreAllMocks();
     await cleanDatabase();
     const response = await request(app)
-                    .get('/v1/todos/alltodos?skip=0&take=2');
+                    .get('/v1/todos/alltodos?offset=0&limit=2');
     expect(response.status).toBe(200);
     expect(response.body).toEqual([]);
   });
@@ -356,21 +356,21 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
     expect(response2.body.todo_parent_id).toBe(response.body.id);
 
     const responseFinal = await request(app)
-                  .post('/v1/todos/fromtodo?skip=0&take=10')
+                  .post('/v1/todos/fromtodo?offset=0&limit=10')
                   .send({id:response.body.id})
                   .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
   });
   test("#6.2 Enters {} and returns status 400 and a empty []", async ()=>{
     const response = await request(app)
-                            .post('/v1/todos/fromtodo?skip0&take=10')
+                            .post('/v1/todos/fromtodo?offset=0&limit=10')
                             .send({})
                             .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
   });
   test("#6.3 Enters {id:notKnown} and returns status 200 and [] ", async ()=>{
     const responseFinal = await request(app)
-                            .post('/v1/todos/fromtodo?skip=0&take=10')
+                            .post('/v1/todos/fromtodo?offset=0&limit=10')
                             .send({id:Math.floor(Math.random()*1000)})
                             .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
@@ -384,7 +384,7 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
       throw serverIsDown;
     });
     const responseFinal = await request(app)
-                          .post('/v1/todos/fromtodo?skip=0&take=10')
+                          .post('/v1/todos/fromtodo?offset=0&limit=10')
                           .send({id:Math.floor(Math.random()*1000)})
                           .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(500);
@@ -516,7 +516,7 @@ describe("#8 PUT /todos/edit",()=>{
     expect(response3.statusCode).toBe(200);
 
     const responseFinal = await request(app)
-                  .get('/v1/todos/allTodos?skip=0&take=10')
+                  .get('/v1/todos/alltodos?offset=0&limit=10')
     //console.log("responseFinal.body: \n", responseFinal.body);
     //console.log("editedTodo: \n", editedTodo);
     expect(responseFinal.statusCode).toBe(200);
@@ -742,7 +742,7 @@ describe("#9 PATCH /todos/complete?id=",()=>{
 
 
     const response3 = await request(app)
-                  .get('/v1/todos/allTodos?skip=0&take=1')
+                  .get('/v1/todos/alltodos?offset=0&limit=1')
     expect(response3.statusCode).toBe(200);
     expect(response3.body[0].completed).toBe(true);
 
@@ -752,7 +752,7 @@ describe("#9 PATCH /todos/complete?id=",()=>{
     expect(response4.statusCode).toBe(200);
 
     const response5 = await request(app)
-                  .get('/v1/todos/allTodos?skip=0&take=1')
+                  .get('/v1/todos/alltodos?offset=0&limit=1')
     expect(response5.statusCode).toBe(200);
     expect(response5.body[0].completed).toBe(false);
   });
