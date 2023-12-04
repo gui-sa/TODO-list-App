@@ -2,14 +2,14 @@
 CREATE DATABASE  sql_app;
 \c sql_app;
 
-CREATE TABLE users(
+CREATE TABLE IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     birth DATE
 );
 
-CREATE TABLE todos(
+CREATE TABLE IF NOT EXISTS todos(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     description VARCHAR(255),
@@ -25,14 +25,14 @@ CREATE TABLE todos(
 CREATE DATABASE  test_sql_app;
 \c test_sql_app;
 
-CREATE TABLE users(
+CREATE TABLE  IF NOT EXISTS users(
     id SERIAL PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     birth DATE
 );
 
-CREATE TABLE todos(
+CREATE TABLE  IF NOT EXISTS todos(
     id SERIAL PRIMARY KEY,
     name VARCHAR(50),
     description VARCHAR(255),

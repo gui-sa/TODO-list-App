@@ -3,12 +3,9 @@
 const express = require('express');
 const router = express.Router();
 const main_controller = require('../controllers/main');
-const todos_router = require('./todos');
-const users_router = require('./users');
+const version_router = require ('./versions')
 
-router.use('/todos',todos_router);
-
-router.use('/users',users_router);
+router.use('/v1', version_router);
 
 router.get('/teste',main_controller.testeGet);
 

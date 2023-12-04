@@ -58,7 +58,7 @@ describe("#2 Tests route: GET /asdsa", () => {
 });
 
 
-describe("#3 Tests route: POST /users/newuser", ()=>{
+describe("#3 Tests route: POST /v1/users/newuser", ()=>{
   test("#3.1 Should return 201", async ()=>{
     const newUser = {
       name: "Gobinha bacana",
@@ -66,7 +66,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
       birth: "2023-12-10"
     };
     const response = await request(app)
-                          .post('/users/newuser')
+                          .post('/v1/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -80,7 +80,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
       birth: "2023-12-10"
     };
     const response = await request(app)
-                          .post('/users/newuser')
+                          .post('/v1/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(409);
@@ -91,7 +91,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
       email: "Gobinha2@gmail.com"
     };
     const response = await request(app)
-                          .post('/users/newuser')
+                          .post('/v1/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -103,7 +103,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
       email: "gobinha.bacana2@snail.com"
     };
     const response = await request(app)
-                          .post('/users/newuser')
+                          .post('/v1/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
@@ -121,7 +121,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
       throw pgError;
     })
     const response = await request(app)
-                          .post('/users/newuser')
+                          .post('/v1/users/newuser')
                           .send(newUser)
                           .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(500);
@@ -129,7 +129,7 @@ describe("#3 Tests route: POST /users/newuser", ()=>{
 });
 
 // /todos/newtodo
-describe("#5 Tests route: POST /todos/newtodo",()=>{
+describe("#5 Tests route: POST /v1/todos/newtodo",()=>{
   test("#5.1 Send {email,name,description} receives http status 201", async ()=>{
     const userThere = {
         name:"Testenildo5",
@@ -138,7 +138,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const createdUser = await request(app)
-                    .post('/users/newuser')
+                    .post('/v1/users/newuser')
                     .send(userThere)
                     .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -152,7 +152,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const response = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(201);
@@ -168,7 +168,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -181,7 +181,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const response2 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo2)
                   .set('Content-Type', 'application/json');
     expect(response2.statusCode).toBe(201);
@@ -194,7 +194,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
       description:"Isso eh uma descricao de Integracao 2"
     };
     const response = await request(app)
-                .post('/todos/newtodo')
+                .post('/v1/todos/newtodo')
                 .send(newTodo)
                 .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
@@ -207,7 +207,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
       description:"Isso eh uma descricao de Integracao 2"
     };
     const response = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
@@ -221,7 +221,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const response = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(201);
@@ -241,7 +241,7 @@ describe("#5 Tests route: POST /todos/newtodo",()=>{
     };
 
     const response = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(500);
@@ -258,7 +258,7 @@ describe("#4 GET /todos/allTodos",()=>{
       birth: null
     };
     const createdUser = await request(app)
-                    .post('/users/newuser')
+                    .post('/v1/users/newuser')
                     .send(userThere)
                     .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -272,7 +272,7 @@ describe("#4 GET /todos/allTodos",()=>{
     };
 
     const createdTodo1 = await request(app)
-              .post('/todos/newtodo')
+              .post('/v1/todos/newtodo')
               .send(todo1)
               .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -287,7 +287,7 @@ describe("#4 GET /todos/allTodos",()=>{
     };
 
     const createdTodo2 = await request(app)
-              .post('/todos/newtodo')
+              .post('/v1/todos/newtodo')
               .send(todo2)
               .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -295,7 +295,7 @@ describe("#4 GET /todos/allTodos",()=>{
     expect(createdTodo2.body).not.toBe(undefined);
 
     const response = await request(app)
-                    .get('/todos/alltodos?skip=0&take=2');
+                    .get('/v1/todos/alltodos?skip=0&take=2');
     expect(response.statusCode).toBe(200);
     expect(response.body[0].name).toBe("Fazer Cafe para seu Teste de Integracao");
     expect(response.body[1].name).toBe("Fazer Cafe para seu Teste de Integracao2");
@@ -304,7 +304,7 @@ describe("#4 GET /todos/allTodos",()=>{
     jest.restoreAllMocks();
     await cleanDatabase();
     const response = await request(app)
-                    .get('/todos/alltodos?skip=0&take=2');
+                    .get('/v1/todos/alltodos?skip=0&take=2');
     expect(response.status).toBe(200);
     expect(response.body).toEqual([]);
   });
@@ -323,7 +323,7 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
     };
 
     const createdUser = await request(app)
-                .post('/users/newuser')
+                .post('/v1/users/newuser')
                 .send(userThere)
                 .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -336,7 +336,7 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
         description:"Isso eh uma descricao de Integracao"
     };
     const response = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo1)
                   .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(201);
@@ -349,28 +349,28 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
       todo_parent_id: response.body.id
     };
     const response2 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo2)
                   .set('Content-Type', 'application/json');
     expect(response2.statusCode).toBe(201);
     expect(response2.body.todo_parent_id).toBe(response.body.id);
 
     const responseFinal = await request(app)
-                  .post('/todos/fromtodo?skip=0&take=10')
+                  .post('/v1/todos/fromtodo?skip=0&take=10')
                   .send({id:response.body.id})
                   .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
   });
   test("#6.2 Enters {} and returns status 400 and a empty []", async ()=>{
     const response = await request(app)
-                            .post('/todos/fromtodo?skip0&take=10')
+                            .post('/v1/todos/fromtodo?skip0&take=10')
                             .send({})
                             .set('Content-Type', 'application/json');
     expect(response.statusCode).toBe(400);
   });
   test("#6.3 Enters {id:notKnown} and returns status 200 and [] ", async ()=>{
     const responseFinal = await request(app)
-                            .post('/todos/fromtodo?skip=0&take=10')
+                            .post('/v1/todos/fromtodo?skip=0&take=10')
                             .send({id:Math.floor(Math.random()*1000)})
                             .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(200);
@@ -384,7 +384,7 @@ describe("#6 Tests 'findTasksFromTodoId' from todos controller with GET /todos/f
       throw serverIsDown;
     });
     const responseFinal = await request(app)
-                          .post('/todos/fromtodo?skip=0&take=10')
+                          .post('/v1/todos/fromtodo?skip=0&take=10')
                           .send({id:Math.floor(Math.random()*1000)})
                           .set('Content-Type', 'application/json');
     expect(responseFinal.statusCode).toBe(500);
@@ -406,7 +406,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
     };
 
     const createdUser = await request(app)
-                .post('/users/newuser')
+                .post('/v1/users/newuser')
                 .send(userThere)
                 .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -419,7 +419,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
         description:"Isso eh uma descricao de Integracao"
     };
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -427,13 +427,13 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
 
     //console.log(response1.body.id);
     const response = await request(app)
-                        .delete(`/todos/delete?id=${response1.body.id}`);
+                        .delete(`/v1/todos/delete?id=${response1.body.id}`);
     expect(response.statusCode).toBe(202);
   });
 
   test("#7.2 Enters /todos/delete?InvalidID returnin 400", async ()=>{
     const response = await request(app)
-                        .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
+                        .delete(`/v1/todos/delete?id=${Math.floor(Math.random()*10000)}`);
     expect(response.statusCode).toBe(400);
   });
 
@@ -444,7 +444,7 @@ describe("#7 DELETE todo /todos/delete?id=<>",()=>{
       throw serverIsDown;
     });
     const response = await request(app)
-                    .delete(`/todos/delete?id=${Math.floor(Math.random()*10000)}`);
+                    .delete(`/v1/todos/delete?id=${Math.floor(Math.random()*10000)}`);
     expect(response.statusCode).toBe(500);
   });
 });
@@ -462,7 +462,7 @@ describe("#8 PUT /todos/edit",()=>{
     };
 
     const createdUser = await request(app)
-                .post('/users/newuser')
+                .post('/v1/users/newuser')
                 .send(userThere)
                 .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -475,7 +475,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -489,7 +489,7 @@ describe("#8 PUT /todos/edit",()=>{
     }
 
     const response2 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo2)
                   .set('Content-Type', 'application/json');
     expect(response2.statusCode).toBe(201);
@@ -506,7 +506,7 @@ describe("#8 PUT /todos/edit",()=>{
     };
 
     const response3 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("response3.body: \n", response3.body);
@@ -516,7 +516,7 @@ describe("#8 PUT /todos/edit",()=>{
     expect(response3.statusCode).toBe(200);
 
     const responseFinal = await request(app)
-                  .get('/todos/allTodos?skip=0&take=10')
+                  .get('/v1/todos/allTodos?skip=0&take=10')
     //console.log("responseFinal.body: \n", responseFinal.body);
     //console.log("editedTodo: \n", editedTodo);
     expect(responseFinal.statusCode).toBe(200);
@@ -533,7 +533,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com pao"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -545,7 +545,7 @@ describe("#8 PUT /todos/edit",()=>{
       completed:true
     };
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte2: ",response2.body);
@@ -559,7 +559,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com chocolate"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -570,7 +570,7 @@ describe("#8 PUT /todos/edit",()=>{
       name:"Essa tarefa foi editada ~ ama chocolate",
     };
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -584,7 +584,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com cogumelos"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -595,7 +595,7 @@ describe("#8 PUT /todos/edit",()=>{
       name:"Essa tarefa foi editada ~ ama cogumelos",
     };
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -609,7 +609,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com cogumelos"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -619,7 +619,7 @@ describe("#8 PUT /todos/edit",()=>{
       id:response1.body.id
     };
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -632,7 +632,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com Bolo"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -642,7 +642,7 @@ describe("#8 PUT /todos/edit",()=>{
       name: "Picar as abobrinhas"
     };
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -655,7 +655,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com Bolo"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -663,7 +663,7 @@ describe("#8 PUT /todos/edit",()=>{
 
     const editedTodo = {};
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -676,7 +676,7 @@ describe("#8 PUT /todos/edit",()=>{
       description:"Isso eh uma descricao de Integracao com chocolate"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -694,7 +694,7 @@ describe("#8 PUT /todos/edit",()=>{
     });
 
     const response2 = await request(app)
-                  .put('/todos/edit')
+                  .put('/v1/todos/edit')
                   .send(editedTodo)
                   .set('Content-Type', 'application/json');
     //console.log("parte3: ",response2.body);
@@ -705,7 +705,7 @@ describe("#8 PUT /todos/edit",()=>{
 
 
 describe("#9 PATCH /todos/complete?id=",()=>{
-  test("9.1 /todos/complete?id returning 200 and checks if it has been toggled", async ()=>{
+  test("9.1 /v1/todos/complete?id returning 200 and checks if it has been toggled", async ()=>{
     await cleanDatabase();
 
     const userThere = {
@@ -715,7 +715,7 @@ describe("#9 PATCH /todos/complete?id=",()=>{
     };
 
     const createdUser = await request(app)
-                .post('/users/newuser')
+                .post('/v1/users/newuser')
                 .send(userThere)
                 .set('Content-Type', 'application/json');
     //console.log(response.body);
@@ -729,48 +729,48 @@ describe("#9 PATCH /todos/complete?id=",()=>{
       description:"Isso eh uma descricao de Integracao"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
     expect(response1.body.id).not.toEqual(undefined);
 
     const response2 = await request(app)
-                  .patch(`/todos/complete?id=${response1.body.id}`)
+                  .patch(`/v1/todos/complete?id=${response1.body.id}`)
                   .send();
     expect(response2.statusCode).toBe(200);
 
 
     const response3 = await request(app)
-                  .get('/todos/allTodos?skip=0&take=1')
+                  .get('/v1/todos/allTodos?skip=0&take=1')
     expect(response3.statusCode).toBe(200);
     expect(response3.body[0].completed).toBe(true);
 
     const response4 = await request(app)
-            .patch(`/todos/complete?id=${response1.body.id}`)
+            .patch(`/v1/todos/complete?id=${response1.body.id}`)
             .send();
     expect(response4.statusCode).toBe(200);
 
     const response5 = await request(app)
-                  .get('/todos/allTodos?skip=0&take=1')
+                  .get('/v1/todos/allTodos?skip=0&take=1')
     expect(response5.statusCode).toBe(200);
     expect(response5.body[0].completed).toBe(false);
   });
-  test("9.2 /todos/complete?invalidID returning 409", async ()=>{
+  test("9.2 /v1/todos/complete?invalidID returning 409", async ()=>{
     const newTodo = {
       email:"teste9@snails.com",
       name:"Fazer Cafe para seu Teste de Integracao",
       description:"Isso eh uma descricao de Integracao"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
     expect(response1.body.id).not.toEqual(undefined);
 
     const response2 = await request(app)
-                  .patch(`/todos/complete?id=909`)
+                  .patch(`/v1/todos/complete?id=909`)
                   .send();
     expect(response2.statusCode).toBe(409);
   });
@@ -781,7 +781,7 @@ describe("#9 PATCH /todos/complete?id=",()=>{
       description:"Isso eh uma descricao de Integracao"
     }
     const response1 = await request(app)
-                  .post('/todos/newtodo')
+                  .post('/v1/todos/newtodo')
                   .send(newTodo)
                   .set('Content-Type', 'application/json');
     expect(response1.statusCode).toBe(201);
@@ -794,7 +794,7 @@ describe("#9 PATCH /todos/complete?id=",()=>{
     });
 
     const response2 = await request(app)
-                  .patch(`/todos/complete?id=${response1.body.id}`)
+                  .patch(`/v1/todos/complete?id=${response1.body.id}`)
                   .send();
     expect(response2.statusCode).toBe(500);
   });
