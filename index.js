@@ -1,20 +1,19 @@
 'use strict'
 
-const express = require('express');
-const router =  require('./routes/router');
-const bodyParser = require('body-parser');
-require('dotenv').config();
+const express = require('express')
+const router = require('./routes/router')
+const bodyParser = require('body-parser')
+require('dotenv').config()
 
-const app = express();
-const port = process.env.PORT || 3000;
+const app = express()
+const port = process.env.PORT || 3000
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
-app.use('/',router);
+app.use('/', router)
 
-app.listen(port).on('listening',()=>{
-    console.log(`Server listening on http://127.0.0.1:${port}`);
-});
+app.listen(port).on('listening', () => {
+  console.log(`Server listening on http://127.0.0.1:${port}`)
+})
 
-
-module.exports = app;
+module.exports = app

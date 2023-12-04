@@ -1,37 +1,36 @@
 'use strict'
 
-const {BadRequestError,ErrorHandler} = require('./errors');
-const pgObject = require('./pg');
+const { BadRequestError } = require('./errors')
+const PgObject = require('./pg')
 
-const createEmptyUser = async function(user){
-    const pgClient = new pgObject();
-    await pgClient.connect();
-    const createdUser = await pgClient.query(`
+const createEmptyUser = async function (user) {
+  const pgClient = new PgObject()
+  await pgClient.connect()
+  const createdUser = await pgClient.query(`
             INSERT INTO users(name, email, birth) 
-            values ('${user.name}','${user.email}',${user.birth?`'${user.birth}'`:"NULL"})
-            returning *;`);
-    await pgClient.end();
+            values ('${user.name}','${user.email}',${user.birth ? `'${user.birth}'` : 'NULL'})
+            returning *;`)
+  await pgClient.end()
 
-    return createdUser.rows[0];
+  return createdUser.rows[0]
 }
 
-const getUserByEmail = async function(searchEmail){
-    if(typeof searchEmail==='string'){
-
-        const pgClient = new pgObject();
-        await pgClient.connect();
-        const userReceived = await pgClient.query(`
+const getUserByEmail = async function (searchEmail) {
+  if (typeof searchEmail === 'string') {
+    const pgClient = new PgObject()
+    await pgClient.connect()
+    const userReceived = await pgClient.query(`
             SELECT * FROM users
             WHERE users.email='${searchEmail}';   
-            `);
-        await pgClient.end();
-        return userReceived.rows[0];
-    }else{
-        throw new BadRequestError("To get an email it should be valid");
-    }
+            `)
+    await pgClient.end()
+    return userReceived.rows[0]
+  } else {
+    throw new BadRequestError('To get an email it should be valid')
+  }
 }
 
 module.exports = {
-    createEmptyUser,
-    getUserByEmail
+  createEmptyUser,
+  getUserByEmail
 }
