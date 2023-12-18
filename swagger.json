@@ -1,0 +1,58 @@
+{
+    "openapi":"3.1.0",
+    "info":{
+        "title":"To-do Planner REST API",
+        "version":"2.0.0"
+    },
+    "servers":[
+        {
+            "url":"http://localhost:3000/v1",
+            "description":"TO-DO base route ambiente de desenvolvimento"
+        }
+    ],
+    "paths":{
+        "/users":{
+            "get":{
+                "summary":"Gets all users",
+                "description":"Collecting all users and its data",
+                "tags":[
+                    "Users"
+                ]
+            },
+            "post":{
+                "summary":"Creates user",
+                "description":"Creates a new instance of user",
+                "tags":[
+                    "Users"
+                ],
+                "requestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "$ref":"#/components/schemas/users"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components":{
+        "schemas":{
+            "users":{
+                "type":"object",
+                "properties":{
+                    "name":{
+                        "type":"string"
+                    },
+                    "email":{
+                        "type":"string"
+                    },
+                    "birth":{
+                        "type":"string"
+                    }
+                }
+            }
+        }
+    }
+}

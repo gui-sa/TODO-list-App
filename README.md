@@ -20,3 +20,7 @@ Agora implemente usando SQL puro.
 git checkout --theirs main ./README.md
 
 Voce pode usar checkout para recuperar outros arquivos!
+
+## Connecting PSQL
+
+sudo -u [userName] psql
