@@ -17,10 +17,26 @@
                 "description":"Collecting all users and its data",
                 "tags":[
                     "Users"
-                ]
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type":"array",
+                                    "$ref":"#/components/schemas/users"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Error"
+                    }
+                }
             },
             "post":{
-                "summary":"Creates user",
+                "summary":"Creates a user",
                 "description":"Creates a new instance of user",
                 "tags":[
                     "Users"
@@ -29,9 +45,137 @@
                     "content":{
                         "application/json":{
                             "schema":{
+                                "type":"object",
                                 "$ref":"#/components/schemas/users"
+                            },
+                            "examples":{
+                                "Complete":{
+                                    "value":{
+                                        "name":"Guilherme",
+                                        "email":"guime.sa9@gmail.com",
+                                        "birth":"2023-12-04"
+                                    }
+                                },
+                                "Required":{
+                                    "value":{
+                                        "name":"Joao",
+                                        "email":"joao.feijao@email.com"
+                                    }
+                                }
                             }
                         }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description":"OK",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/components/schemas/users"
+                                }
+                            }
+                        }
+                    },
+                    "409":{
+                        "description":"Conflicting Data"
+                    },
+                    "400":{
+                        "description":"Bad Request"
+                    },
+                    "500":{
+                        "description":"Internal Error"
+                    }
+                }
+            }
+        },
+        "/users/{id}":{
+            "get":{
+                "summary":"Gets a specific user",
+                "description":"Collecting a user data",
+                "tags":[
+                    "Users"
+                ],
+                "parameters":[
+                    {
+                        "in":"path",
+                        "name":"id",
+                        "description":"The user id",
+                        "required":true,
+                        "schema":{
+                            "type":"integer",
+                            "minimum":1
+                        }
+                    }
+                ],
+                "responses":{
+                    "200":{
+                        "description":"OK",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "$ref":"#/components/schemas/users"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description":"Internal Error"
+                    }
+                }
+            },
+            "put":{
+                "summary":"Updates entirely a specific user",
+                "description":"Overwrite a specific user's data",
+                "tags":[
+                    "Users"
+                ],
+                "parameters":[
+                    {
+                        "in":"path",
+                        "name":"id",
+                        "description":"The user id",
+                        "required":true,
+                        "schema":{
+                            "type":"integer",
+                            "minimum":1
+                        }
+                    }
+                ],
+                "requestBody":{
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type":"object",
+                                "$ref":"#/components/schemas/users"
+                            },
+                            "examples":{
+                                "Complete":{
+                                    "value":{
+                                        "name":"Guilherme Overwrited",
+                                        "email":"guime.sa9@gmail.com",
+                                        "birth":"2023-12-04"
+                                    }
+                                },
+                                "Required":{
+                                    "value":{
+                                        "name":"Joao Overwrited",
+                                        "email":"joao.feijao@email.com"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses":{
+                    "201":{
+                        "description":"Updated"
+                    },
+                    "400":{
+                        "description":"Bad Request"
+                    },
+                    "500":{
+                        "description":"Internal Error"
                     }
                 }
             }
